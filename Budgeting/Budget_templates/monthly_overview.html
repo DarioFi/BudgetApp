@@ -3,7 +3,32 @@
     <div class="m-1 col-md-5">
 
         <h3 class="font-weight-normal"> Interval balance: <strong>€{{ interval_balance }}</strong></h3>
-
+        <table class="table table-bordered m-0" id="dtBasicExample" role="grid"
+               aria-describedby="DataTables_Table_0_info">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Payment</th>
+                <th scope="col">Deposit</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for category in categories_balance_names_interval_pair %}
+                <tr>
+                    <td>
+                        {{ category.0 }}
+                    </td>
+                    {% if category.1 > 0 %}
+                        <td> {{ category.1 }} </td>
+                        <td></td>
+                    {% else %}
+                        <td></td>
+                        <td> {{ category.1 }} </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <div class="m-1 col-md-6">
@@ -24,38 +49,35 @@
                 type: 'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
                 data: {
                     labels: [
-                        {% for name in categories_names_interval %}
-                            '{{ name }}',
-                        {% endfor %}
+                        {% for data in categories_balance_names_interval_pair %}{% if data.1 > 0 %}'{{ data.0 }}', {% endif %}{% endfor %}
                     ],
                     datasets: [{
                         {#label: 'Population',#}
                         data: [
-                            {% for data in categories_balances_interval %}
-                                {{ data }}
-                                ,
-                            {% endfor %}
+                            {% for data in categories_balance_names_interval_pair %}{% if data.1 > 0 %}'{{ data.1 }}', {% endif %}{% endfor %}
                         ],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.6)',
                             'rgba(54, 162, 235, 0.6)',
-                            {#'rgba(255, 206, 86, 0.6)',#}
-                            {#'rgba(75, 192, 192, 0.6)',#}
-                            {#'rgba(153, 102, 255, 0.6)',#}
-                            {#'rgba(255, 159, 64, 0.6)',#}
-                            {#'rgba(255, 99, 132, 0.6)'#}
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
                         ],
                         borderWidth: 1,
                         borderColor: '#777',
-                        hoverBorderWidth: 2,
-                        hoverBorderColor: '#000'
+                        hoverBorderWidth: 6,
+                        hoverBorderColor:
+                            ['rgba(255, 99, 132, 0.6)','rgba(54, 162, 235, 0.6)','rgba(255, 206, 86, 0.6)','rgba(75, 192, 192, 0.6)','rgba(153, 102, 255, 0.6)','rgba(255, 159, 64, 0.6)','rgba(255, 99, 132, 0.6)']
+                        {#['#000000']#}
                     }]
                 },
                 options: {
                     title: {
                         display: false,
                         text: 'Expenses',
-                        fontSize: 15
+                        fontSize: 12
                     },
                     legend: {
                         display: true,
@@ -73,7 +95,8 @@
                         }
                     },
                     tooltips: {
-                        enabled: false
+                        enabled: true,
+                        displayColors: true
                     }
                 }
             });

@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     #     owns
     'pages',
     'Budgeting',
-    # 'users',
     'users.apps.UsersConfig',
 ]
 
@@ -86,7 +85,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                # 'my_templates': 'TemplatesTags'
+            }
         },
+
     },
 ]
 
