@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="row no-gutters row-bordered">
+        <div class="col-md-5">
+            <div class="card m-1" style="">
+                <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">
+                    Total Balance: <strong>€ {{ total_balance }}</strong></h2>
+
+
+                {% include 'account_summary.html' %}
+
+            </div>
+
+            <div class="card m-1">
+
+                {% include 'new_transaction_template.html' %}
+
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card m-1">
+                <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">
+                    <strong>This month overview</strong></h2>
+                {% include 'monthly_overview.html' %}
+            </div>
+            <div class="card m-1">
+                <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">
+                    <strong>Transaction list</strong></h2>
+                {% include 'transaction_summary.html' %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

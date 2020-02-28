@@ -1,0 +1,11 @@
+<td> {{transaction.account.name}}  </td>
+<td> {{transaction.timeDate}}  </td>
+<td> {{transaction.category.name}}  </td>
+<td> {{transaction.description}}  </td>
+{% if transaction.balance > 0 %}
+    <td> € {{transaction.balance}}  </td>
+    <td></td>
+{% else %}
+    <td></td>
+    <td> € {{transaction.balance}}  </td>
+{% endif %}

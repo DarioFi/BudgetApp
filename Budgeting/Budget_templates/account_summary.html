@@ -1,0 +1,26 @@
+
+
+
+{% if account_list %}
+
+<table class="table table-bordered m-0" id="dtBasicExample" role="grid" aria-describedby="DataTables_Table_0_info">
+    <thead class="thead-light">
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for account in account_list %}
+    <tr>
+        {% include 'account_single_view.html' %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+Nessun account!
+
+{% endif %}

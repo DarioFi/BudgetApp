@@ -1,0 +1,132 @@
+<div class="m-1">
+    <h2 class="text-center  font-weight-normal py-2 px-2 px-sm-2 m-0">Create a transaction</h2>
+    <hr class="border-light m-0">
+    <form method="POST" id="creazione_transazione"> {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label">Descrizione</label>
+            <input type="text" name="descrizione" id="descrizione" class="form-control" autocomplete="off">
+        </div>
+
+        <div class="">
+            <label>Account</label>
+            <select title="Scegli una opzione" data-live-search="true" data-live-search-placeholder="Cerca opzioni"
+                    id="Account_select">
+                {% for account in account_list %}
+                    <option value="{{ account.name }}">{{ account.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="">
+            <label>Categoria</label>
+            <select title="Scegli una opzione" data-live-search="true" data-live-search-placeholder="Cerca opzioni"
+                    id="Categoria_select">
+
+                {% for category in categories_names %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="it-datepicker-wrapper">
+            <div class="form-group">
+                <input class="form-control it-date-datepicker" id="date_time" type="date"
+                       placeholder="inserisci la data in formato gg/mm/aaaa">
+                <label for="date1">Date label</label>
+            </div>
+        </div>
+
+
+        <label>Amount</label>
+        <input type="number" step="0.01" id="amount" name="amount" placeholder="quantità" autocomplete="off"/>
+
+        <button type="button" value="create" name="create" id="submit_form"
+                class="btn btn-primary btn-lg mt-4 ">Add transaction
+        </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+
+
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                // Only send the token to relative URLs i.e. locally.
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            }
+        }
+    });
+
+    {#TODO: cercare live search, scrivere la roba per le api#}
+
+    $("#submit_form").click(function (e) {
+
+        var descrizione = $("#descrizione").val();
+        var account = $("#Account_select").val();
+        var categoria = $("#Categoria_select").val();
+        var date = $("#date_time").val();
+        var amount = $("#amount").val();
+
+
+        $.ajax({
+            url: '/budget/ajax/transaction_creation',
+            type: "POST",
+
+            data: {
+                'description': descrizione,
+                'account': account,
+                'category': categoria,
+                'date': date,
+                'amount': amount
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.state === "success") {
+                    $("#descrizione").val("");
+                    $("#Account_select").val("");
+                    $("#Categoria_select").val("");
+                    $("#date_time").val("");
+                    $("#amount").val("");
+                    location.reload();
+                }
+                // Do stuff
+                //change stuff
+                else {
+                    alert(data.state)
+
+                }
+            }
+        })
+    })
+
+</script>
