@@ -6,6 +6,8 @@ class Account(models.Model):
     name = models.TextField(max_length=30, null=False, unique=True)
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
 
+    starting_balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0.0)
+
     def __str__(self):
         string = "Account:  {} || Balance {}".format(self.name, self.balance)
         return string

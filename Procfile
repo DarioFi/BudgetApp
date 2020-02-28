@@ -1,0 +1,1 @@
+web: gunicorn FilaDebts.wsgi --log-file -
