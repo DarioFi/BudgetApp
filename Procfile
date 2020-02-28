@@ -1,1 +1,1 @@
-web: gunicorn filaBudget.wsgi --log-file -
+web: gunicorn BudgetApp.wsgi --log-file -
