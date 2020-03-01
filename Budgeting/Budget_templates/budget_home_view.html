@@ -21,6 +21,8 @@
         </div>
         <div class="col-md-7">
             <div class="card m-1">
+                <a href="{% url 'transactions' %}">transactions</a>
+                <a href="{% url 'admin:index' %}">Admin</a>
                 <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">
                     <strong>This month overview</strong></h2>
                 {% include 'monthly_overview.html' %}
