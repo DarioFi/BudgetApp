@@ -3,28 +3,31 @@
 
 {% if transaction_list %}
 
-<table class="table table-bordered m-0" id="dtBasicExample" role="grid" aria-describedby="DataTables_Table_0_info">
-    <thead class="thead-light">
-    <tr>
-        <th scope="col">Account</th>
-        <th scope="col">Date</th>
-        <th scope="col">Category</th>
-        <th scope="col">Description</th>
-        <th scope="col">Payment</th>
-        <th scope="col">Deposit</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for transaction in transaction_list %}
-    <tr>
-        {% include 'transaction_single_view.html' %}
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    <table class="table table-bordered m-0" id="dtBasicExample" role="grid" aria-describedby="DataTables_Table_0_info">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Account</th>
+            <th scope="col">Date</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Payment</th>
+            <th scope="col">Deposit</th>
+            {% if context == "transactions_overview" %}
+                <th scope="col">Delete</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transaction_list %}
+            <tr>
+                {% include 'transaction_single_view.html' %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% else %}
 
-Nessuna transazione!
+    Nessuna transazione!
 
 {% endif %}

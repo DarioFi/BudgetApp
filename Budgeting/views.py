@@ -29,7 +29,8 @@ def home_budget(request):
         'account_list': account_list,
         'total_balance': total_account_balance,
         'transaction_list': transaction_list,
-        'categories_names': categories_list_names
+        'categories_names': categories_list_names,
+        'context': "homepage"
     }
 
     date_finish = date.today()
@@ -115,7 +116,7 @@ def generate_data_categories_from_dates(date_init, date_finish, user):
     return pairs
 
 
-def generate_data_accounts_from_dates(date_init, date_finish): # TODO: aggiustarla
+def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiustarla
     account_set = Account.objects.all()
 
     pairs = []
@@ -128,7 +129,39 @@ def generate_data_accounts_from_dates(date_init, date_finish): # TODO: aggiustar
     return pairs
 
 
+def interval_summary(request):
+    return 0
+
+
+def transactions_overview(request):
+    transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id).order_by('timeDate')]
+    stuff = {
+        'transaction_list': transaction_list,
+        'context': "transactions_overview"
+    }
+    return render(request, 'transactions_page.html', stuff)
+
+
 # TODO: query per i bilanci, spese per categorie, bilanci per account, ecc.
 
 def test_page(request):
     return render(request, 'test.html', {})
+
+
+# TODO: aggiungere il changelog
+
+def delete_transaction_ajax_post_api(request):
+    if request.method != "POST" or not request.user.is_authenticated:
+        return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
+
+    id :int = request.POST.get('id')
+    to_del = Transaction.objects.filter(id=id, user_full_id=request.user.id)
+    if len(to_del) == 1:
+        to_del[0].delete()
+        return JsonResponse({'state': "success"})
+    elif len(to_del) == 0:
+        return JsonResponse({'state': "La transazione non esiste"})
+    elif len(to_del) > 1:
+        return JsonResponse({'state': "Errore server"})
+
+
