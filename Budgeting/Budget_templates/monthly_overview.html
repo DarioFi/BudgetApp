@@ -10,6 +10,7 @@
                 <th scope="col">Category</th>
                 <th scope="col">Payment</th>
                 <th scope="col">Deposit</th>
+                <th scope="col">Percentage</th>
             </tr>
             </thead>
             <tbody>
@@ -18,13 +19,16 @@
                     <td>
                         {{ category.0 }}
                     </td>
-                    {% if category.1 > 0 %}
-                        <td> {{ category.1 }} </td>
+                    {% if category.1 < 0 %}
+                        <td><font color="red">{{ category.1 }} </font></td>
                         <td></td>
                     {% else %}
                         <td></td>
-                        <td> {{ category.1 }} </td>
+                        <td><font color="green">{{ category.1 }}</font></td>
                     {% endif %}
+                    <td>
+                        {{ category.2 }}%
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -49,12 +53,12 @@
                 type: 'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
                 data: {
                     labels: [
-                        {% for data in categories_balance_names_interval_pair %}{% if data.1 > 0 %}'{{ data.0 }}', {% endif %}{% endfor %}
+                        {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}'{{ data.0 }}', {% endif %}{% endfor %}
                     ],
                     datasets: [{
                         {#label: 'Population',#}
                         data: [
-                            {% for data in categories_balance_names_interval_pair %}{% if data.1 > 0 %}'{{ data.1 }}', {% endif %}{% endfor %}
+                            {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}{{ data.1 }}*(-1), {% endif %}{% endfor %}
                         ],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.6)',
@@ -69,7 +73,7 @@
                         borderColor: '#777',
                         hoverBorderWidth: 6,
                         hoverBorderColor:
-                            ['rgba(255, 99, 132, 0.6)','rgba(54, 162, 235, 0.6)','rgba(255, 206, 86, 0.6)','rgba(75, 192, 192, 0.6)','rgba(153, 102, 255, 0.6)','rgba(255, 159, 64, 0.6)','rgba(255, 99, 132, 0.6)']
+                            ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
                         {#['#000000']#}
                     }]
                 },
