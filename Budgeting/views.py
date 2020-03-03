@@ -33,7 +33,7 @@ def home_budget(request):
         'context': "homepage"
     }
 
-    date_finish = date.today().replace(month=2, day=29)
+    date_finish = date.today()
     date_init = date_finish.replace(day=1)
     categories_balance_names_interval_pair = generate_data_categories_from_dates(date_init, date_finish, request.user)
 
