@@ -154,7 +154,7 @@ def delete_transaction_ajax_post_api(request):
     if request.method != "POST" or not request.user.is_authenticated:
         return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
 
-    id :int = request.POST.get('id')
+    id: int = request.POST.get('id')
     to_del = Transaction.objects.filter(id=id, user_full_id=request.user.id)
     if len(to_del) == 1:
         to_del[0].delete()
@@ -163,5 +163,3 @@ def delete_transaction_ajax_post_api(request):
         return JsonResponse({'state': "La transazione non esiste"})
     elif len(to_del) > 1:
         return JsonResponse({'state': "Errore server"})
-
-

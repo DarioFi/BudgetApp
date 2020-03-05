@@ -13,7 +13,7 @@
 {% block content %}
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
-    <div class="authentication-inner py-5" style="margin: auto; width: 30%">
+    <div class="authentication-inner py-5" style="margin: auto; width: 50%">
 
         <!-- Logo -->
         <div class="d-flex justify-content-center align-items-center mb-5">
@@ -54,7 +54,7 @@
 
                 <!-- Login -->
 {#                <div class="col-md-2"></div>#}
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <h5 class="text-center text-muted font-weight-normal py-4 px-4 px-sm-5 m-0">Login to Your
                         Account</h5>
                     <hr class="border-light m-0">
@@ -85,6 +85,37 @@
                 </div>
 {#                <div class="col-md-2"></div>#}
                 <!-- / Login -->
+
+                <!-- Register -->
+                <div class="col-md-6">
+                    <h5 class="text-center text-muted font-weight-normal py-4 px-4 px-sm-5 m-0">Create an Account</h5>
+                    <hr class="border-light m-0">
+
+                    <div class="px-4 px-sm-5 pt-4 pb-5 pb-sm-5">
+
+                        <!-- Register form -->
+{#                        <form method="POST"> {% csrf_token %}#}
+                            <div class="form-group">
+                                <label class="form-label">Your name</label>
+                                <input type="text" name="username_r" id="username_r_ajax" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Your email</label>
+                                <input type="text" name="email_r" id="email_r_ajax" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password_r_ajax" id="password_r_ajax" class="form-control">
+                            </div>
+                            <button type="submit" value="Sing up" name="register" id="register_button"
+                                    class="btn btn-primary btn-block mt-4">Sign up
+                            </button>
+{#                        </form>#}
+                        <!-- / Register form -->
+
+                    </div>
+                </div>
+                <!-- / Register -->
 
 
             </div>
@@ -140,7 +171,33 @@
 
 
             })
+        });
 
+        $("#register_button").click(function () {
+
+            var username = $("#username_r_ajax").val();
+            var password = $("#password_r_ajax").val();
+            var email = $("#email_r_ajax").val();
+
+            $.ajax({
+                url: '/users/ajax/register_api',
+                type: 'POST',
+                data: {
+                    'username': username,
+                    'password': password,
+                    'email': email
+                },
+                dataType: 'Json',
+                success: function (data) {
+                    if (data.state == 'success'){
+                        location.reload();
+                    }
+                    else {
+                        alert(data.state);
+                    }
+                }
+
+            })
 
         })
     </script>

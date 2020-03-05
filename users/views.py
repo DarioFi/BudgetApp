@@ -6,6 +6,7 @@ from Budgeting.views import home_budget
 # from django.contrib.auth.models import AbstractUser
 from users.models import User
 
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -42,9 +43,12 @@ def login_request(request):
     return render(request, 'login.html', stuff)
 
 
-def validate_username_l(request):
-    username = request.GET.get('username', None)
-    return JsonResponse({'exist': User.objects.filter(username__iexact=username).exists()})
+def does_username_exists(request):
+    if User.objects.filter(username__iexact=request.GET.get('username', None)).exists():
+        return JsonResponse({'exist': 1})
+    return JsonResponse({'exist': 0})
+
+
 
 
 def ajax_login(request):
@@ -67,9 +71,39 @@ def ajax_login(request):
             response['errore'] = 2
             return JsonResponse(response)
 
-
     else:
-
         response['errore'] = 1
 
         return JsonResponse(response)
+
+
+def ajax_register(request):
+    if request.method == "POST":
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+
+        if not ('@' in email and '.' in email):
+            return JsonResponse({'state': 'this email is not considered valid'})
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'state': 'username already taken'})
+
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'state': 'this email is already associated with an account'})
+
+        new_user = User(username=username, email=email)
+        new_user.set_password(password)
+        new_user.save()
+
+        user =authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return JsonResponse({'state': 'success'})
+
+        return JsonResponse({'state': 'success'})
+
+    else:
+        print('Server error')
+        return JsonResponse({'state': 'Request Error'})
