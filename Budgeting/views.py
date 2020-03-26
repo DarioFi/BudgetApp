@@ -145,19 +145,19 @@ def transactions_overview(request):
             transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
                                                                       account__name=acc_filter,
                                                                       category__name=cat_filter,
-                                                                      description__contains=description_filter)]
+                                                                      description__icontains=description_filter)]
         else:
             transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
                                                                       account__name=acc_filter,
-                                                                      description__contains=description_filter)]
+                                                                      description__icontains=description_filter)]
     else:
         if cat_filter:
             transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
                                                                       category__name=cat_filter,
-                                                                      description__contains=description_filter)]
+                                                                      description__icontains=description_filter)]
         else:
             transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
-                                                                      description__contains=description_filter)]
+                                                                      description__icontains=description_filter)]
 
     transaction_list.sort(key=lambda x: x.timeDate, reverse=True)
 
