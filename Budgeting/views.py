@@ -134,10 +134,40 @@ def interval_summary(request):
 
 
 def transactions_overview(request):
-    transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id).order_by('timeDate')]
+    acc_filter = request.GET.get('acc_filter')
+    cat_filter = request.GET.get('cat_filter')
+    description_filter = request.GET.get('description_filter')
+    if not description_filter:
+        description_filter = ""
+
+    if acc_filter:
+        if cat_filter:
+            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
+                                                                      account__name=acc_filter,
+                                                                      category__name=cat_filter,
+                                                                      description__contains=description_filter)]
+        else:
+            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
+                                                                      account__name=acc_filter,
+                                                                      description__contains=description_filter)]
+    else:
+        if cat_filter:
+            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
+                                                                      category__name=cat_filter,
+                                                                      description__contains=description_filter)]
+        else:
+            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
+                                                                      description__contains=description_filter)]
+
+    transaction_list.sort(key=lambda x: x.timeDate, reverse=True)
+
+    categories_list_names = [j.name for j in CategoryExpInc.objects.filter(user_full_id=request.user.id)]
+    account_list = [j for j in Account.objects.filter(user_full_id=request.user.id)]
     stuff = {
         'transaction_list': transaction_list,
-        'context': "transactions_overview"
+        'context': "transactions_overview",
+        'categories_names': categories_list_names,
+        'account_list': account_list
     }
     return render(request, 'transactions_page.html', stuff)
 

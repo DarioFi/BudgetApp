@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
     <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">
@@ -7,6 +6,63 @@
         Transactions list
 
     </h2>
+
+    <h4 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Filters</h4>
+
+    <div class="">
+
+        <div class="row no-gutters row-bordered">
+            <div class="col-md-4">
+                <label class="form-label">Descrizione</label>
+                <input type="text" id="description_filter" class="form-control" autocomplete="off">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Account</label>
+                <select id="acc_filter">
+                    <option value="All">All</option>
+                    {% for account in account_list %}
+                        <option value="{{ account.name }}">{{ account.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Categoria</label>
+                <select id="cat_filter">
+                    <option value="All">All</option>
+                    {% for category in categories_names %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <button id="add_filter_butt">Search</button>
+    </div>
+
+    <script>
+
+        $("#add_filter_butt").click(function () {
+
+            let str = "{% url 'transactions' %}?";
+
+            if ($("#description_filter").val() != null) {
+                str += "description_filter=" + $("#description_filter").val() + "&"
+            }
+            if ($("#acc_filter").val() != null && $("#acc_filter").val() != "All") {
+                str += "acc_filter=" + $("#acc_filter").val() + "&";
+            }
+            if ($("#cat_filter").val() != null && $("#cat_filter").val() != "All") {
+                str += "cat_filter=" + $("#cat_filter").val();
+            }
+
+            window.location = str;
+
+
+        })
+
+
+    </script>
     {% include 'transaction_summary.html' %}
 
 {% endblock %}

@@ -7,6 +7,6 @@ urlpatterns = [
     path('', home_budget),
     path('test/', test_page),
     path('interval_balance/', interval_summary),
-    path('transactions/', transactions_overview, name="transactions"),
+    path('transactions', transactions_overview, name="transactions"),
     path('ajax/del_transaction', delete_transaction_ajax_post_api)
 ]

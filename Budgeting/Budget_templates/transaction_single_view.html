@@ -14,7 +14,7 @@
 {% if context == "transactions_overview" %}
     <td>
         <button id="del{{ transaction.id }}">
-            <i class="material-icons" >delete_forever</i>
+            <i class="material-icons">delete_forever</i>
         </button>
     </td>
 {% endif %}
@@ -23,25 +23,27 @@
 
     $("#del{{ transaction.id }}").click(function () {
 
-        $.ajax({
-            url: '/budget/ajax/del_transaction',
-            type: "POST",
-            data: {
-                'id': {{ transaction.id }},
-            },
+        if (confirm("Sicuro di voler eliminare la transazione?")) {
 
-            dataType: 'json',
-            success: function (data) {
-                if (data.state == 'success') {
-                    location.reload();
-                } else {
-                    alert(data.state)
+            $.ajax({
+                url: '/budget/ajax/del_transaction',
+                type: "POST",
+                data: {
+                    'id': {{ transaction.id }},
+                },
+
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state === 'success') {
+                        location.reload();
+                    } else {
+                        alert(data.state)
+                    }
                 }
-            }
 
 
-        })
-
+            })
+        }
     })
 
 
