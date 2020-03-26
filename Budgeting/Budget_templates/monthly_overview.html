@@ -22,7 +22,7 @@
                     {% if category.1 < 0 %}
                         <td><font color="red">{{ category.1 }} </font></td>
                         <td></td>
-                    {% else %}
+                    {% elif category.1 > 0 %}
                         <td></td>
                         <td><font color="green">{{ category.1 }}</font></td>
                     {% endif %}

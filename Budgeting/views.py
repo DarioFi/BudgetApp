@@ -4,6 +4,7 @@ from .models import Account, Transaction, CategoryExpInc
 from decimal import Decimal
 from datetime import date
 from math import trunc
+from .json_queries import *
 
 
 # Create your views here.
@@ -137,27 +138,17 @@ def transactions_overview(request):
     acc_filter = request.GET.get('acc_filter')
     cat_filter = request.GET.get('cat_filter')
     description_filter = request.GET.get('description_filter')
-    if not description_filter:
-        description_filter = ""
+
+    objs = Transaction.objects.filter(user_full_id=request.user.id)
 
     if acc_filter:
-        if cat_filter:
-            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
-                                                                      account__name=acc_filter,
-                                                                      category__name=cat_filter,
-                                                                      description__icontains=description_filter)]
-        else:
-            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
-                                                                      account__name=acc_filter,
-                                                                      description__icontains=description_filter)]
-    else:
-        if cat_filter:
-            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
-                                                                      category__name=cat_filter,
-                                                                      description__icontains=description_filter)]
-        else:
-            transaction_list = [h for h in Transaction.objects.filter(user_full_id=request.user.id,
-                                                                      description__icontains=description_filter)]
+        objs = objs.filter(account__name=acc_filter)
+    if cat_filter:
+        objs = objs.filter(category__name=cat_filter)
+    if description_filter:
+        objs = objs.filter(description__contains=description_filter)
+
+    transaction_list = [h for h in objs]
 
     transaction_list.sort(key=lambda x: x.timeDate, reverse=True)
 
@@ -173,6 +164,7 @@ def transactions_overview(request):
 
 
 # TODO: query per i bilanci, spese per categorie, bilanci per account, ecc.
+
 
 def test_page(request):
     return render(request, 'test.html', {})

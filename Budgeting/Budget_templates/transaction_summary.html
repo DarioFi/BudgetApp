@@ -17,7 +17,7 @@
             {% endif %}
         </tr>
         </thead>
-        <tbody>
+        <tbody id="transaction_list_body">
         {% for transaction in transaction_list %}
             <tr>
                 {% include 'transaction_single_view.html' %}

@@ -36,6 +36,20 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="it-datepicker-wrapper">
+                <div class="form-group">
+                    <input class="form-control it-date-datepicker" id="date_init" type="date"
+                           placeholder="inserisci la data in formato gg/mm/aaaa">
+                    <label for="date1">Date label</label>
+                </div>
+            </div>
+            <div class="it-datepicker-wrapper">
+                <div class="form-group">
+                    <input class="form-control it-date-datepicker" id="date_end" type="date"
+                           placeholder="inserisci la data in formato gg/mm/aaaa">
+                    <label for="date1">Date label</label>
+                </div>
+            </div>
         </div>
         <button id="add_filter_butt">Search</button>
     </div>
@@ -44,21 +58,60 @@
 
         $("#add_filter_butt").click(function () {
 
-            let str = "{% url 'transactions' %}?";
+            request = {};
 
-            if ($("#description_filter").val() != null) {
-                str += "description_filter=" + $("#description_filter").val() + "&"
-            }
-            if ($("#acc_filter").val() != null && $("#acc_filter").val() != "All") {
-                str += "acc_filter=" + $("#acc_filter").val() + "&";
-            }
-            if ($("#cat_filter").val() != null && $("#cat_filter").val() != "All") {
-                str += "cat_filter=" + $("#cat_filter").val();
-            }
+            acc_filter = $("#acc_filter").val();
+            if (acc_filter != "All") request['acc_filter'] = acc_filter;
+            cat_filter = $("#cat_filter").val();
+            if (cat_filter != "All") request['cat_filter'] = cat_filter;
+            description_filter = $("#description_filter").val();
+            request['description_filter'] = description_filter;
+            date_init = $("#date_init").val();
+            if (date_init) request['date_init'] = date_init;
+            date_end = $("#date_end").val();
+            if (date_end) request['date_end'] = date_end;
 
-            window.location = str;
+
+            $.get("{% url 'json_transactions' %}",
+                request,
+                function (data, status) {
+
+                    table = document.getElementById("transaction_list_body");
+                    while (table.childElementCount != 0) table.children[0].remove();
+                    data.transactions.forEach(create_elem);
+
+                    function create_elem(item, index) {
+
+                        let riga = document.createElement("tr");
+
+                        for (let j = 0; j < 4; j++) {
+                            let kek = document.createElement("td");
+                            kek.innerText = item[j];
+                            riga.appendChild(kek);
+                        }
+
+                        if (item[4] > 0) {
+                            let kek = document.createElement("td");
+                            kek.innerText = "€ ";
+                            kek.innerText += item[4];
+                            riga.appendChild(kek);
+                            kek = document.createElement("td");
+                            riga.appendChild(kek);
+                        } else {
+                            let kek = document.createElement("td");
+                            riga.appendChild(kek);
+                            kek = document.createElement("td");
+                            kek.innerText = "€ ";
+                            kek.innerText += -item[4];
+                            riga.appendChild(kek);
+                        }
+
+                        table.appendChild(riga);
+                    }
 
 
+                }
+            );
         })
 
 
