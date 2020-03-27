@@ -88,7 +88,7 @@ def create_transaction_ajax_post_api(request):
     return JsonResponse(stuff)
 
 
-@login_required
+
 def generate_data_categories_from_dates(date_init, date_finish, user):
     category_set = CategoryExpInc.objects.filter(user_full_id=user.id)
 
@@ -118,7 +118,6 @@ def generate_data_categories_from_dates(date_init, date_finish, user):
     return pairs
 
 
-@login_required
 def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiustarla
     account_set = Account.objects.all()
 
