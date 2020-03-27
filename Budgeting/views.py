@@ -1,15 +1,14 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect
 from .models import Account, Transaction, CategoryExpInc
-from decimal import Decimal
-from datetime import date
-from math import trunc
 from django.contrib.auth.decorators import login_required
 from .json_queries import *
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
 
+@csrf_exempt
 @login_required
 def home_budget(request):
     account_list = [j for j in Account.objects.filter(user_full_id=request.user.id)]

@@ -2,8 +2,10 @@ from django.http import JsonResponse, HttpResponseRedirect
 from .models import Account, Transaction, CategoryExpInc
 from decimal import Decimal
 from datetime import date, timedelta
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def generate_json_transaction_get(request):
     transactions = Transaction.objects.filter(user_full_id=request.user.id)
     acc_filter = request.GET.get('acc_filter')
@@ -34,6 +36,7 @@ def generate_json_transaction_get(request):
     return JsonResponse(stuff)
 
 
+@login_required
 def generate_categories_overview_json(request):
     cat_set = CategoryExpInc.objects.filter(user_full_id=request.user.id)
 
@@ -67,3 +70,8 @@ def generate_categories_overview_json(request):
 
     return JsonResponse({'categories': data})
 
+
+def is_authenticated(request):
+    if request.user.is_authenticated:
+        return JsonResponse({'is_authenticated': True})
+    return JsonResponse({'is_authenticated': False})
