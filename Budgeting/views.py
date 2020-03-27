@@ -4,15 +4,14 @@ from .models import Account, Transaction, CategoryExpInc
 from decimal import Decimal
 from datetime import date
 from math import trunc
+from django.contrib.auth.decorators import login_required
 from .json_queries import *
 
 
 # Create your views here.
 
+@login_required
 def home_budget(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect('/home/')
-
     account_list = [j for j in Account.objects.filter(user_full_id=request.user.id)]
 
     total_account_balance = sum([j.balance for j in account_list])
@@ -46,6 +45,7 @@ def home_budget(request):
     return render(request, "budget_home_view.html", stuff)
 
 
+@login_required
 def create_transaction_ajax_post_api(request):
     if request.method != "POST" or not request.user.is_authenticated:
         return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
@@ -88,6 +88,7 @@ def create_transaction_ajax_post_api(request):
     return JsonResponse(stuff)
 
 
+@login_required
 def generate_data_categories_from_dates(date_init, date_finish, user):
     category_set = CategoryExpInc.objects.filter(user_full_id=user.id)
 
@@ -117,6 +118,7 @@ def generate_data_categories_from_dates(date_init, date_finish, user):
     return pairs
 
 
+@login_required
 def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiustarla
     account_set = Account.objects.all()
 
@@ -130,6 +132,7 @@ def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiusta
     return pairs
 
 
+@login_required
 def transactions_overview(request):
     acc_filter = request.GET.get('acc_filter')
     cat_filter = request.GET.get('cat_filter')
@@ -167,7 +170,7 @@ def test_page(request):
 
 
 # TODO: aggiungere il changelog
-
+@login_required
 def delete_transaction_ajax_post_api(request):
     if request.method != "POST" or not request.user.is_authenticated:
         return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
@@ -183,8 +186,9 @@ def delete_transaction_ajax_post_api(request):
         return JsonResponse({'state': "Errore server"})
 
 
+@login_required
 def categories_summary(request):
-    cat_set = CategoryExpInc.objects.filter(user_full_id=request.user.id)
+    # cat_set = CategoryExpInc.objects.filter(user_full_id=request.user.id)
 
     stuff = {
 

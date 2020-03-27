@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login
 
+
 from Budgeting.views import home_budget
 # from django.contrib.auth.models import AbstractUser
 from users.models import User
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -15,7 +17,7 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
-
+@csrf_exempt
 def login_request(request):
     if request.method == "POST":
         if 'login' in request.POST:
@@ -42,15 +44,14 @@ def login_request(request):
 
     return render(request, 'login.html', stuff)
 
-
+@csrf_exempt
 def does_username_exists(request):
     if User.objects.filter(username__iexact=request.GET.get('username', None)).exists():
         return JsonResponse({'exist': 1})
     return JsonResponse({'exist': 0})
 
 
-
-
+@csrf_exempt
 def ajax_login(request):
     response = {
         'errore': 0
@@ -76,7 +77,7 @@ def ajax_login(request):
 
         return JsonResponse(response)
 
-
+@csrf_exempt
 def ajax_register(request):
     if request.method == "POST":
 
@@ -97,7 +98,7 @@ def ajax_register(request):
         new_user.set_password(password)
         new_user.save()
 
-        user =authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password)
         if user:
             login(request, user)
             return JsonResponse({'state': 'success'})
