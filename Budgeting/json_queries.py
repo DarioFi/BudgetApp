@@ -63,6 +63,6 @@ def generate_categories_overview_json(request):
         else:
             negative_bal += somma
 
-        data.append([cat.name, cat.exchange, temp, somma, 0, alfa.count(), cat.created_on])
+        data.append([cat.name, cat.exchange, temp, somma, 0, alfa.count(), str(cat.created_on)[0:10]])
 
     return JsonResponse({'categories': data})
