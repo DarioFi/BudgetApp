@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
 
@@ -29,6 +30,7 @@ class Account(models.Model):
 class CategoryExpInc(models.Model):
     name = models.TextField(max_length=30, null=False, unique=True)
     exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
+    created_on = models.DateTimeField(editable=False, default=timezone.now())
 
     user_full = models.ForeignKey(
         User,
@@ -40,6 +42,11 @@ class CategoryExpInc(models.Model):
     def __str__(self):
         string = "Category:  {} || Expense {}".format(self.name, self.exchange)
         return string
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_on = timezone.now()
+        return super(CategoryExpInc, self).save(*args, **kwargs)
 
 
 class Transaction(models.Model):

@@ -105,10 +105,62 @@
                             kek.innerText += -item[4];
                             riga.appendChild(kek);
                         }
+                        let kek = document.createElement("button");
+                        kek.id = "Delete_json";
+                        kek.value = item[5];
+                        kek.innerHTML = "<i class=\"material-icons\">delete_forever</i>";
+
+                        kek.onclick = function () {
+                            const valuer = this.value;
+                            if (confirm("Sicuro di voler eliminare la transazione?")) {
+                                $.ajax({
+                                    url: '/budget/ajax/del_transaction',
+                                    type: "POST",
+                                    data: {
+                                        'id': valuer,
+                                    },
+
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        if (data.state === 'success') {
+                                            $("#add_filter_butt").click();
+                                        } else {
+                                            alert(data.state)
+                                        }
+                                    }
+                                })
+                            }
+                        };
+
+                        let f = document.createElement("td");
+                        f.appendChild(kek);
+                        riga.appendChild(f);
 
                         table.appendChild(riga);
                     }
 
+                    $("#Delete_json").click(function () {
+
+                            if (confirm("Sicuro di voler eliminare la transazione?")) {
+                                $.ajax({
+                                    url: '/budget/ajax/del_transaction',
+                                    type: "POST",
+                                    data: {
+                                        'id': this.value,
+                                    },
+
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        if (data.state === 'success') {
+                                            $("#add_filter_butt").click();
+                                        } else {
+                                            alert(data.state)
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    )
 
                 }
             );

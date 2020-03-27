@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div class="card m-1" style="">
+        <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Categories overview</h2>
+
+        <table class="table table-bordered m-0" id="dtBasicExample" role="grid"
+               aria-describedby="DataTables_Table_0_info">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Total Balance</th>
+                <th scope="col"># of transactions</th>
+                <th scope="col">Past 30 days</th>
+                <th scope="col">Past 30 days share</th>
+                <th scope="col"># interval transactions</th>
+                <th scope="col">Created on</th>
+            </tr>
+            </thead>
+            <tbody id="cat_table_body">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            request = {};
+            request['null'] = 0;
+            $.get("{% url 'json_categories' %}",
+                request,
+                function (data, status) {
+
+                    table = document.getElementById("cat_table_body");
+                    while (table.childElementCount != 0) table.children[0].remove();
+                    data.categories.forEach(create_elem);
+
+                    function create_elem(item, index) {
+                        let riga = document.createElement("tr");
+
+                        for (let j = 0; j < item.length; j++) {
+                            let kek = document.createElement("td");
+                            kek.innerText = item[j];
+                            riga.appendChild(kek);
+                        }
+                        table.appendChild(riga);
+                    }
+                }
+            );
+        })
+
+
+    </script>
+
+
+{% endblock %}

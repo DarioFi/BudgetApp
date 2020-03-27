@@ -89,7 +89,7 @@ def create_transaction_ajax_post_api(request):
 
 
 def generate_data_categories_from_dates(date_init, date_finish, user):
-    category_set = CategoryExpInc.objects.all()
+    category_set = CategoryExpInc.objects.filter(user_full_id=user.id)
 
     pairs = []
 
@@ -128,10 +128,6 @@ def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiusta
                                                                                                           date_finish])])))
 
     return pairs
-
-
-def interval_summary(request):
-    return 0
 
 
 def transactions_overview(request):
@@ -185,3 +181,13 @@ def delete_transaction_ajax_post_api(request):
         return JsonResponse({'state': "La transazione non esiste"})
     elif len(to_del) > 1:
         return JsonResponse({'state': "Errore server"})
+
+
+def categories_summary(request):
+    cat_set = CategoryExpInc.objects.filter(user_full_id=request.user.id)
+
+    stuff = {
+
+    }
+
+    return render(request, "categories_page.html", stuff)
