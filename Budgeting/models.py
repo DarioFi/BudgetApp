@@ -30,7 +30,7 @@ class Account(models.Model):
 class CategoryExpInc(models.Model):
     name = models.TextField(max_length=30, null=False, unique=True)
     exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
-    created_on = models.DateTimeField(editable=False, default=timezone.now())
+    created_on = models.DateTimeField(editable=False, default=timezone.now)
 
     user_full = models.ForeignKey(
         User,

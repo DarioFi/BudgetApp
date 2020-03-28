@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #     third parts
     # 'crispy_forms',
+    'rest_framework.authtoken',
+    'rest_framework',
     #     owns
     'pages',
     'Budgeting',
@@ -58,7 +60,17 @@ INSTALLED_APPS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-AUTH_USERS_MODEL = 'users.CustomUser'
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+AUTH_USERS_MODEL = 'django.contrib.auth.models.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -151,4 +163,5 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 django_heroku.settings(locals())

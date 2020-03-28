@@ -1,12 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login
-
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
 
 from Budgeting.views import home_budget
 # from django.contrib.auth.models import AbstractUser
 from users.models import User
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
 
 
 def get_client_ip(request):
@@ -16,6 +15,7 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
 
 def login_request(request):
     if request.method == "POST":
@@ -43,10 +43,15 @@ def login_request(request):
 
     return render(request, 'login.html', stuff)
 
+
 def does_username_exists(request):
     if User.objects.filter(username__iexact=request.GET.get('username', None)).exists():
         return JsonResponse({'exist': 1})
     return JsonResponse({'exist': 0})
+
+
+from rest_framework.response import Response
+
 
 def ajax_login(request):
     response = {
@@ -56,14 +61,13 @@ def ajax_login(request):
 
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        print(username)
-        print(password)
-
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
-            return JsonResponse(response)
+            response['user'] = username
+            token = Token.objects.get(user=user).key
+            response['token'] = token
+            return Response(response)
         else:
             response['errore'] = 2
             return JsonResponse(response)
@@ -73,8 +77,9 @@ def ajax_login(request):
 
         return JsonResponse(response)
 
+
 def ajax_register(request):
-    if request.method == "POST":
+    if request.method == "POST":  # TODO: aggiungere la registrazione tramite rest api
 
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -96,9 +101,12 @@ def ajax_register(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
-            return JsonResponse({'state': 'success'})
 
-        return JsonResponse({'state': 'success'})
+        response = {'state': 'success'}
+        response['user'] = username
+        token = Token.objects.get(user=user).key
+        response['token'] = token
+        return Response(response)
 
     else:
         print('Server error')

@@ -1,14 +1,9 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponseRedirect
-from .models import Account, Transaction, CategoryExpInc
-from django.contrib.auth.decorators import login_required
-from .json_queries import *
-from django.views.decorators.csrf import csrf_exempt
+from Budgeting.api.json_queries import *
 
 
 # Create your views here.
 
-@csrf_exempt
 @login_required
 def home_budget(request):
     account_list = [j for j in Account.objects.filter(user_full_id=request.user.id)]
@@ -43,48 +38,6 @@ def home_budget(request):
 
     return render(request, "budget_home_view.html", stuff)
 
-
-@login_required
-def create_transaction_ajax_post_api(request):
-    if request.method != "POST" or not request.user.is_authenticated:
-        return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
-
-    stuff = {
-        'state': "failed"
-    }
-
-    description: str = request.POST.get('description')
-    account: str = request.POST.get('account')
-    category: str = request.POST.get('category')
-    date = request.POST.get('date')
-    try:
-        amount: float = float(request.POST.get('amount'))
-    except:
-        return JsonResponse({'state': "Error in the value of amount"})
-
-    updater_account: Account = Account.objects.filter(name=account)[0]
-    updater_category: CategoryExpInc = CategoryExpInc.objects.filter(name=category)[0]
-
-    new_transaction = Transaction(
-        description=description,
-        timeDate=date,
-        balance=amount,
-        account=updater_account,
-        category=updater_category,
-        user_full_id=request.user.id
-    )
-
-    new_transaction.save(force_insert=True)
-
-    updater_account.balance -= Decimal(amount)
-    updater_category.exchange -= Decimal(amount)
-
-    updater_account.save()
-    updater_category.save()
-
-    stuff['state'] = "success"
-
-    return JsonResponse(stuff)
 
 
 
@@ -168,20 +121,6 @@ def test_page(request):
 
 
 # TODO: aggiungere il changelog
-@login_required
-def delete_transaction_ajax_post_api(request):
-    if request.method != "POST" or not request.user.is_authenticated:
-        return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
-
-    id: int = request.POST.get('id')
-    to_del = Transaction.objects.filter(id=id, user_full_id=request.user.id)
-    if len(to_del) == 1:
-        to_del[0].delete()
-        return JsonResponse({'state': "success"})
-    elif len(to_del) == 0:
-        return JsonResponse({'state': "La transazione non esiste"})
-    elif len(to_del) > 1:
-        return JsonResponse({'state': "Errore server"})
 
 
 @login_required
