@@ -25,8 +25,8 @@
                     {% elif category.1 > 0 %}
                         <td></td>
                         <td><font color="green">{{ category.1 }}</font></td>
-                    {% elif category.1 == 0 %}
-                    {% else %}
+                    {% endif %}
+                    {% if category.1 != 0 %}
                         <td>
                             {{ category.2 }}%
                         </td>
