@@ -15,6 +15,7 @@
             </thead>
             <tbody>
             {% for category in categories_balance_names_interval_pair %}
+                {% if category.1 != 0 %}
                 <tr>
                     <td>
                         {{ category.0 }}
@@ -26,12 +27,11 @@
                         <td></td>
                         <td><font color="green">{{ category.1 }}</font></td>
                     {% endif %}
-                    {% if category.1 != 0 %}
                         <td>
                             {{ category.2 }}%
                         </td>
-                    {% endif %}
                 </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>
