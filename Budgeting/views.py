@@ -132,3 +132,7 @@ def categories_summary(request):
     }
 
     return render(request, "categories_page.html", stuff)
+
+@login_required
+def new_cateogry_form(request):
+    return render(request, 'new_category_template.html', {})

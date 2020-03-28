@@ -8,6 +8,7 @@ from users.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -49,9 +50,6 @@ def does_username_exists(request):
     if User.objects.filter(username__iexact=request.GET.get('username', None)).exists():
         return JsonResponse({'exist': 1})
     return JsonResponse({'exist': 0})
-
-
-
 
 
 def ajax_login(request):

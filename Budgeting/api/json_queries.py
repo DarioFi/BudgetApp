@@ -134,3 +134,21 @@ def is_authenticated(request):
     if request.user.is_authenticated:
         return JsonResponse({'is_authenticated': True})
     return JsonResponse({'is_authenticated': False})
+
+
+@login_required
+def create_new_category(request):
+    if request.method == 'POST':
+        name: str = request.POST.get('name')
+        try:
+            exchange: float = float(request.POST.get('exchange'))
+        except:
+            return JsonResponse({'state': 'Error in the value of the initial balance'})
+
+        if CategoryExpInc.objects.filter(name=name, user_full=request.user).exists():
+            return JsonResponse({'state': "A category with this name already exists!"})
+        cat = CategoryExpInc(name=name, exchange=exchange, user_full=request.user)
+        cat.save(force_insert=True)
+
+        return JsonResponse({'state': 'success'})
+    return JsonResponse({'state': 'Bad request'})
