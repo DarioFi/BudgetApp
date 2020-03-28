@@ -25,10 +25,12 @@
                     {% elif category.1 > 0 %}
                         <td></td>
                         <td><font color="green">{{ category.1 }}</font></td>
+                    {% elif category.1 == 0 %}
+                    {% else %}
+                        <td>
+                            {{ category.2 }}%
+                        </td>
                     {% endif %}
-                    <td>
-                        {{ category.2 }}%
-                    </td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -58,52 +60,73 @@
                     datasets: [{
                         {#label: 'Population',#}
                         data: [
-                            {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}{{ data.1 }}*(-1), {% endif %}{% endfor %}
-                        ],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 206, 86, 0.6)',
-                            'rgba(75, 192, 192, 0.6)',
-                            'rgba(153, 102, 255, 0.6)',
-                            'rgba(255, 159, 64, 0.6)',
-                            'rgba(255, 99, 132, 0.6)'
-                        ],
-                        borderWidth: 1,
-                        borderColor: '#777',
-                        hoverBorderWidth: 6,
-                        hoverBorderColor:
-                            ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
-                        {#['#000000']#}
-                    }]
-                },
-                options: {
-                    title: {
-                        display: false,
-                        text: 'Expenses',
-                        fontSize: 12
-                    },
-                    legend: {
-                        display: true,
-                        position: 'right',
-                        labels: {
-                            fontColor: '#000'
-                        }
-                    },
-                    layout: {
-                        padding: {
-                            left: 50,
-                            right: 0,
-                            bottom: 0,
-                            top: 0
-                        }
-                    },
-                    tooltips: {
-                        enabled: true,
-                        displayColors: true
+                            {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}{{ data.1 }} * (-1), {% endif %}{% endfor %}
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#777',
+                    hoverBorderWidth: 6,
+                    hoverBorderColor:
+                        ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
+                    {#['#000000']#}
+                }
+            ]
+            },
+            options: {
+                title: {
+                    display: false,
+                        text
+                :
+                    'Expenses',
+                        fontSize
+                :
+                    12
+                }
+            ,
+                legend: {
+                    display: true,
+                        position
+                :
+                    'right',
+                        labels
+                :
+                    {
+                        fontColor: '#000'
                     }
                 }
-            });
+            ,
+                layout: {
+                    padding: {
+                        left: 50,
+                            right
+                    :
+                        0,
+                            bottom
+                    :
+                        0,
+                            top
+                    :
+                        0
+                    }
+                }
+            ,
+                tooltips: {
+                    enabled: true,
+                        displayColors
+                :
+                    true
+                }
+            }
+            })
+            ;
 
 
         </script>
