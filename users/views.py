@@ -52,7 +52,6 @@ def does_username_exists(request):
 
 from rest_framework.response import Response
 
-
 def ajax_login(request):
     response = {
         'errore': 0
@@ -67,7 +66,7 @@ def ajax_login(request):
             response['user'] = username
             token = Token.objects.get(user=user).key
             response['token'] = token
-            return Response(response)
+            return JsonResponse(response)
         else:
             response['errore'] = 2
             return JsonResponse(response)
