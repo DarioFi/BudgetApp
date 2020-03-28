@@ -6,7 +6,8 @@ from Budgeting.views import home_budget
 # from django.contrib.auth.models import AbstractUser
 from users.models import User
 from rest_framework.authtoken.models import Token
-
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -50,7 +51,8 @@ def does_username_exists(request):
     return JsonResponse({'exist': 0})
 
 
-from rest_framework.response import Response
+
+
 
 def ajax_login(request):
     response = {
@@ -110,3 +112,11 @@ def ajax_register(request):
     else:
         print('Server error')
         return JsonResponse({'state': 'Request Error'})
+
+
+@api_view(['GET', ])
+def is_authenticated(request):
+    if request.user.is_authenticated:
+        return JsonResponse({'detail': "user authenticated"})
+    return JsonResponse({'detail': "valid token, unauthenticated"})
+
