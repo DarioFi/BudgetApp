@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from Budgeting.models import Transaction, CategoryExpInc, Account
 
 
-# @api_view(['GET', ])
+@api_view(['GET', ])
 # @permission_classes((IsAuthenticated, ))
 def rest_api_transactions_overview(request):
     transactions = Transaction.objects.filter(user_full_id=request.user.id)
