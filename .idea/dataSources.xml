@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="budgetAppDb" uuid="0b20aa73-6b16-4127-9ca5-3fa9c6a80b64">
+    <data-source source="LOCAL" name="DB 2020-03-29" uuid="9fbeb9e6-fab6-48ac-abab-f480ba4dcc82">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
@@ -9,12 +9,6 @@
       <driver-properties>
         <property name="enable_load_extension" value="true" />
       </driver-properties>
-    </data-source>
-    <data-source source="LOCAL" name="backups" uuid="2138805f-ea4e-498e-9569-05ab27fec087">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
     </data-source>
   </component>
 </project>

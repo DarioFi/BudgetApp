@@ -16,21 +16,21 @@
             <tbody>
             {% for category in categories_balance_names_interval_pair %}
                 {% if category.1 != 0 %}
-                <tr>
-                    <td>
-                        {{ category.0 }}
-                    </td>
-                    {% if category.1 < 0 %}
-                        <td><font color="red">{{ category.1 }} </font></td>
-                        <td></td>
-                    {% elif category.1 > 0 %}
-                        <td></td>
-                        <td><font color="green">{{ category.1 }}</font></td>
-                    {% endif %}
+                    <tr>
+                        <td>
+                            {{ category.0 }}
+                        </td>
+                        {% if category.1 < 0 %}
+                            <td><font color="red">{{ category.1 }} </font></td>
+                            <td></td>
+                        {% elif category.1 > 0 %}
+                            <td></td>
+                            <td><font color="green">{{ category.1 }}</font></td>
+                        {% endif %}
                         <td>
                             {{ category.2 }}%
                         </td>
-                </tr>
+                    </tr>
                 {% endif %}
             {% endfor %}
             </tbody>
@@ -52,80 +52,68 @@
             Chart.defaults.global.defaultFontColor = '#777';
 
             let massPopChart = new Chart(myChart, {
-                type: 'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
-                data: {
-                    labels: [
-                        {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}'{{ data.0 }}', {% endif %}{% endfor %}
-                    ],
-                    datasets: [{
-                        {#label: 'Population',#}
-                        data: [
-                            {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}{{ data.1 }} * (-1), {% endif %}{% endfor %}
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)',
-                        'rgba(255, 99, 132, 0.6)'
-                    ],
-                    borderWidth: 1,
-                    borderColor: '#777',
-                    hoverBorderWidth: 6,
-                    hoverBorderColor:
-                        ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
-                    {#['#000000']#}
-                }
-            ]
-            },
-            options: {
-                title: {
-                    display: false,
-                        text
-                :
-                    'Expenses',
-                        fontSize
-                :
-                    12
-                }
-            ,
-                legend: {
-                    display: true,
-                        position
-                :
-                    'right',
-                        labels
-                :
-                    {
-                        fontColor: '#000'
+                    type: 'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+                    data: {
+                        labels: [
+                            {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}'{{ data.0 }}', {% endif %}{% endfor %}
+                        ],
+                        datasets: [{
+                            {#label: 'Population',#}
+                            data: [
+                                {% if categories_balance_names_interval_pair == 1234892348324823048 %}1{% endif %}  // it's only purpose is to keep the html functional and not throw errors before templating
+                                {% for data in categories_balance_names_interval_pair %}{% if data.1 < 0 %}{{ data.1 }} * (-1), {% endif %}{% endfor %}
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.6)',
+                                'rgba(54, 162, 235, 0.6)',
+                                'rgba(255, 206, 86, 0.6)',
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(153, 102, 255, 0.6)',
+                                'rgba(255, 159, 64, 0.6)',
+                                'rgba(255, 99, 132, 0.6)'
+                            ],
+                            borderWidth: 1,
+                            borderColor: '#777',
+                            hoverBorderWidth: 6,
+                            hoverBorderColor:
+                                ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
+                            {#['#000000']#}
+                        }]
+                    },
+                    options: {
+                        title: {
+                            display: false,
+                            text: 'Expenses',
+                            fontSize: 12
+                        }
+                        ,
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                fontColor: '#000'
+                            }
+                        }
+                        ,
+                        layout: {
+                            padding: {
+                                left: 50,
+                                right:
+                                    0,
+                                bottom:
+                                    0,
+                                top:
+                                    0
+                            }
+                        }
+                        ,
+                        tooltips: {
+                            enabled: true,
+                            displayColors:
+                                true
+                        }
                     }
-                }
-            ,
-                layout: {
-                    padding: {
-                        left: 50,
-                            right
-                    :
-                        0,
-                            bottom
-                    :
-                        0,
-                            top
-                    :
-                        0
-                    }
-                }
-            ,
-                tooltips: {
-                    enabled: true,
-                        displayColors
-                :
-                    true
-                }
-            }
-            })
+                })
             ;
 
 
