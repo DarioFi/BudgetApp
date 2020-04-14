@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'pages',
     'Budgeting',
     'users.apps.UsersConfig',
+    'CardGames'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
