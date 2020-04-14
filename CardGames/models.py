@@ -57,6 +57,7 @@ class match_scopa(models.Model):
 
     is_started = models.BooleanField(default=False)
 
+    deck = models.TextField(max_length=82, null=True)
 
 class match_invitation(models.Model):
     invited_user = models.ForeignKey(
