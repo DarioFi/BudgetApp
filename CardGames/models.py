@@ -153,8 +153,10 @@ class match_scopa(models.Model):
                 for h in self.ground:
                     if card[1] == h:
                         return "Non puoi prendere la somma se c'è la carta a terra"
-
-            self.ground = self.ground.replace(taken, "")
+            for z in tooks:
+                if z not in self.ground:
+                    return "A terra non risulta la carta che volevi prendere"
+                self.ground = self.ground.replace(z, "")
             if player == self.player1:
                 if self.player_to_play != 1:
                     return "Non è il tuo turno"
@@ -183,6 +185,9 @@ class match_scopa(models.Model):
             else:
                 self.player3_takes += card + taken
         else:
+            for h in self.ground:
+                if card[1] == h:
+                    return "Non puoi prendere la somma se c'è la carta a terra"
             self.ground += card
             # TODO: aggiungere i check per vedere se ci sono combo per prendere
         if player == self.player1:
@@ -215,13 +220,13 @@ class match_scopa(models.Model):
                 if self.players_amount == 3:
                     self.player3_hand = self.deck[-6::]
                     self.deck = self.deck[:-6]
-                else:
+                elif self.players_amount == 4:
                     self.player3_hand = self.deck[-6::]
                     self.deck = self.deck[:-6]
                     self.player4_hand = self.deck[-6::]
                     self.deck = self.deck[:-6]
 
-        self.player_to_play %= 4
+        self.player_to_play %= self.players_amount
         self.player_to_play += 1
         self.save()
         return "success"

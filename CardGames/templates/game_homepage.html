@@ -8,19 +8,27 @@
             <div class="col-md-6">
                 <div class="card">
                     {% for m in games_list %}
-                        {{ m.1 }} {{ m.2 }} {{ m.3 }} {{ m.4 }}
-                        <p>
-                        </p>
-                        <a href="{% url 'match_detail' m.0 %}">Open match</a>
+                        {% if m.2 %}
+                            {{ m.3 }} - {{ m.4 }} - {{ m.5 }} - {{ m.6 }}
+
+                            <p>
+                                <a href="{% url 'match_detail' m.2 %}">Open match</a>
+                                {% if not m.1 %}
+                                    {% if m.0 %}
+                                        <a href="{% url 'start_match' m.2 %}">Start match</a>
+                                    {% else %}
+                                        <p>Waiting for {{ m.3 }} to start the match</p>
+                                    {% endif %}
+                                {% endif %}
+                            </p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
             <div class="col-md-4">
-            <div class="card">
-
-                <p> Notifications </p>
-
-            </div>
+                <div class="card">
+                    <p> Notifications </p>
+                </div>
             </div>
         </div>
     </div>

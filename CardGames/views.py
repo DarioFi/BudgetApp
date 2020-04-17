@@ -16,12 +16,20 @@ def game_homepage(request):
 
     prelist = []
     for j in games_list:
-        if j.players_amount == 2:
-            prelist.append([j.id, j.player1.username, j.player2.username])
-        if j.players_amount == 3:
-            prelist.append([j.id, j.player1.username, j.player2.username, j.player3.username])
-        if j.players_amount == 4:
-            prelist.append([j.id, j.player1.username, j.player2.username, j.player3.username, j.player4.username])
+        t = []
+        if j.player1 == request.user:
+            t.append(True)
+        else:
+            t.append(False)
+        t.append(j.is_started_match)
+        t.append(j.id)
+        t.append(j.player1.username)
+        t.append(j.player2.username)
+        if j.players_amount > 2:
+            t.append(j.player3.username)
+        if j.players_amount > 3:
+            t.append(j.player4.username)
+        prelist.append(t)
 
     stuff['games_list'] = prelist
     return render(request, "game_homepage.html", stuff)
@@ -76,9 +84,15 @@ def ajax_request_match_info(request) -> JsonResponse:
     if match.players_amount > 2:
         temp_players.append(match.player3.username)
         temp_score.append(match.player3_points)
+    else:
+        temp_players.append("")
+        temp_score.append(0)
     if match.players_amount > 3:
         temp_players.append(match.player4.username)
         temp_score.append(match.player4_points)
+    else:
+        temp_players.append("")
+        temp_score.append(0)
     data['player_list'] = temp_players
     data['score_list'] = temp_score
     if match.player1 == request.user:
@@ -91,6 +105,20 @@ def ajax_request_match_info(request) -> JsonResponse:
         data['hand'] = match.player4_hand
 
     data['ground'] = match.ground
+
+    if match.player1 == request.user:
+        data['player_num'] = 1
+    elif match.player2 == request.user:
+        data['player_num'] = 2
+    elif match.player3 == request.user:
+        data['player_num'] = 3
+    elif match.player4 == request.user:
+        data['player_num'] = 4
+
+    data['last_move'] = ""
+
+    data['player_to_play'] = match.player_to_play
+
     data['state'] = "success"
     return JsonResponse(data)
 
@@ -104,6 +132,9 @@ def ajax_play_card(request):
     card_played: str = request.POST.get('card_played')
     card_taken: str = request.POST.get('card_taken')
 
+    if len(card_played) != 2:
+        return JsonResponse({'state': "Played card is not actually playable"})
+
     match_query = match_scopa.objects.filter(id=match_id)
     match_query = match_query.filter(
         Q(player1=request.user) | Q(player2=request.user) | Q(player3=request.user) | Q(player4=request.user))
@@ -113,3 +144,14 @@ def ajax_play_card(request):
     message = match.play_card(request.user, card_played, card_taken)
     return JsonResponse({'state': message})
 
+
+@login_required
+def start_match(request, match_id=0):
+    if match_id == 0:
+        return render(request, 'match_error.html', {'errore': 'no match found'})
+    mat = match_scopa.objects.filter(id=match_id)[0]
+    if mat.player1 == request.user:
+        mess = mat.initiate_new_game()
+        if mess:
+            return match_view(request, match_id=match_id)
+        return render(request, 'match_error.html', {'errore': 'unable to start the match'})

@@ -18,10 +18,26 @@
 
         Your hand:
     </p>
+
+    <div class="card">
+        <p id="Play_card">
+            Test
+        </p>
+
+        <div id="playcardform">
+            <label>Played card</label>
+            <input type="text" id="played_card">
+            <label>Taken cards</label>
+            <input type="text" id="taken_card">
+
+            <button id="Play"> Play!</button>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}
     <script>
+        var tuo_turno = 0;
 
         function update_informations() {
             $.ajax({
@@ -34,18 +50,40 @@
                     success: function (data) {
                         if (data.state === "success") {
 
-                            $('#hand').text(data.hand);
-                            $('#ground').text(data.ground);
+
+                            let hand_str = "Your hand:  "
+                            for (let j = 0; j < data.hand.length; j += 2) {
+                                hand_str += data.hand.substr(j, 2) + " "
+                            }
+                            $('#hand').text(hand_str);
+
+                            hand_str = "Ground:  "
+                            for (let j = 0; j < data.ground.length; j += 2) {
+                                hand_str += data.ground.substr(j, 2) + " "
+                            }
+                            $('#ground').text(hand_str);
 
                             $('#Player1').text(data.player_list[0] + "  " + data.score_list[0]);
                             $('#Player2').text(data.player_list[1] + "  " + data.score_list[1]);
-                            if (data.player_list.length > 2) {
+                            if (data.player_list[2] !== "") {
                                 $('#Player3').text(data.player_list[2] + "  " + data.score_list[2]);
                             }
-                            if (data.player_list.length > 3) {
+                            if (data.player_list[3] !== "") {
                                 $('#Player4').text(data.player_list[3] + "  " + data.score_list[3]);
                             }
 
+                            //TODO: aggiungere form giocare carte
+                            if (data.player_to_play === data.player_num) {
+                                $('#Play_card').text("It's your turn!");
+                                tuo_turno = 1;
+                                document.getElementById("playcardform").style.visibility = "";
+
+                            } else {
+                                $('#Play_card').text("It's " + data.player_list[data.player_to_play - 1] + "'s turn!");
+                                tuo_turno = 0;
+                                document.getElementById("playcardform").style.visibility = "hidden";
+
+                            }
                         } else {
                             alert(data.state)
                         }
@@ -63,5 +101,40 @@
             update_informations();
         }, 5000);
 
+
+        $('#Play').click(function (data) {
+
+            var played = $('#played_card').val();
+            var taken = $('#taken_card').val();
+            if (played === undefined){
+                alert("insert a card to play");
+                return 0
+            }
+            if (taken === undefined){
+                taken = "";
+            }
+            $.ajax({
+                url: '{% url "ajax_play_card" %}',
+                type: "POST",
+                data: {
+                    id: {{ match_id }},
+                    card_played: played,
+                    card_taken: taken
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state === "success"){
+                        update_informations();
+                        $('taken_card').val("");
+                        $('played_card').val("");
+                    }
+                    else{
+                        alert(data.state);
+                        $('taken_card').val("");
+                        $('played_card').val("");
+                    }
+                }
+            })
+        });
     </script>
 {% endblock %}
