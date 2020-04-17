@@ -1,6 +1,8 @@
 from typing import List
 
 from django.db import models
+from django.utils.datetime_safe import datetime
+
 from users.models import User
 from random import shuffle
 
@@ -12,6 +14,8 @@ card_list = [b + str(a) for b in ["a", "b", "c", "d"] for a in range(10)]
 
 class match_scopa(models.Model):
     # region data declarations
+
+    # TODO: spectators
     player1 = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -73,9 +77,19 @@ class match_scopa(models.Model):
 
     match_type = models.IntegerField(null=False, default=0)  # 0: scopa a 2
 
+    created_on = models.DateField(null=False, default=datetime.now)
+
+    last_used_on = models.DateField(null=False, default=datetime.now)
+
     # endregion
 
     def initiate_new_game(self) -> bool:
+        """
+        This methods reset the game state if the game  has been played, preserving the points if the is_started_match 
+        is True
+         :rtype: bool
+         :return: Boolean True if the game has been reset 
+        """
         if self.is_started_game:
             return False
         if self.match_type == 0 and self.players_amount == 2:
@@ -105,6 +119,7 @@ class match_scopa(models.Model):
 
             self.is_started_match = True
             self.is_started_game = True
+
             self.save()
             return True
 
@@ -205,6 +220,9 @@ class match_scopa(models.Model):
                     self.deck = self.deck[:-6]
                     self.player4_hand = self.deck[-6::]
                     self.deck = self.deck[:-6]
+
+        self.player_to_play %= 4
+        self.player_to_play += 1
         self.save()
         return "success"
 
@@ -273,6 +291,8 @@ class match_scopa(models.Model):
         self.player3_points += self.player3_scope
         self.player4_points += self.player4_scope
 
+        self.is_started_game = False
+
         self.save()
 
         return "success"
@@ -299,50 +319,52 @@ class match_invitation(models.Model):
         null=False
     )
 
-    def accept(cls):
-        alfa = cls.match.players_amount
-        senter = cls.sender_user
-        if cls.match.is_started_match:
+    def accept(self):
+        alfa = self.match.players_amount
+        senter = self.sender_user
+        if self.match.is_started_match:
             return 4
 
-        cls.match.players_amount += 1
+        self.match.players_amount += 1
         if alfa == 1:
-            cls.match.player2 = cls.invited_user
-            cls.match.save()
-            new = games_notification(content=cls.invited_user.username + " accepted your invite to play scopone!",
+            self.match.player2 = self.invited_user
+            self.match.save()
+            new = games_notification(content=self.invited_user.username + " accepted your invite to play scopone!",
                                      user=senter)
-            cls.delete()
+            self.delete()
             new.save()
             return 1
         elif alfa == 2:
-            cls.match.player3 = cls.invited_user
-            cls.match.save()
-            new = games_notification(content=cls.invited_user.username + " accepted your invite to play scopone!",
+            self.match.player3 = self.invited_user
+            self.match.save()
+            new = games_notification(content=self.invited_user.username + " accepted your invite to play scopone!",
                                      user=senter)
-            cls.delete()
+            self.delete()
             new.save()
             return 1
         elif alfa == 3:
-            cls.match.player4 = cls.invited_user
-            cls.match.save()
-            new = games_notification(content=cls.invited_user.username + " accepted your invite to play scopone!",
+            self.match.player4 = self.invited_user
+            self.match.save()
+            new = games_notification(content=self.invited_user.username + " accepted your invite to play scopone!",
                                      user=senter)
-            cls.delete()
+            self.delete()
             new.save()
             return 1
         elif alfa == 4:
-            cls.delete()
+            self.delete()
             new = games_notification(
-                content=cls.invited_user.username + " accepted your invite to play scopone but you already have enough players!",
+                content=self.invited_user.username + "accepted your invite to play scopone but you already have "
+                                                     "enough players!",
                 user=senter)
             new.save()
             return 2
         elif alfa > 4:
             new = games_notification(
-                content=cls.invited_user.username + " accepted your invite to play scopone but something is broken in the match",
+                content=self.invited_user.username + "accepted your invite to play scopone but something is broken in "
+                                                     "the match",
                 user=senter)
             new.save()
-            cls.delete()
+            self.delete()
             return 3
 
     # def decline(cls):
@@ -361,3 +383,5 @@ class games_notification(models.Model):
         on_delete=models.CASCADE,
         null=True, blank=True,
     )
+
+    seen = models.BooleanField(default=False)

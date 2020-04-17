@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h3>Match players:</h3>
+       {% if match.player1.id %}
+        <h5>{{ match.player1.username }}</h5>
+    {% endif %}
+    {% if match.player2.id %}
+        <h5>{{ match.player2.username }}</h5>
+    {% endif %}
+    {% if match.player3.id %}
+        <h5>{{ match.player3.username }}</h5>
+    {% endif %}
+    {% if match.player4.id %}
+        <h5>{{ match.player4.username }}</h5>
+    {% endif %}
+
+
+{% endblock %}

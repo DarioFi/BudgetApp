@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="card">
+        <div class="row no-gutters row-bordered">
+            <div class="col-md-2">
+                Create new match
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    {% for m in games_list %}
+                        {{ m.1 }} {{ m.2 }} {{ m.3 }} {{ m.4 }}
+                        <p>
+                        </p>
+                        <a href="{% url 'match_detail' m.0 %}">Open match</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+            <div class="card">
+
+                <p> Notifications </p>
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

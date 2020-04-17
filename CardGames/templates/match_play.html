@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h3>Match players:</h3>
+    <p id="Player1"></p>
+    <p id="Player2"></p>
+    <p id="Player3"></p>
+    <p id="Player4"></p>
+
+    <p id="ground">
+
+        Ground cards:
+    </p>
+
+
+
+    <p id="hand">
+
+        Your hand:
+    </p>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+        function update_informations() {
+            $.ajax({
+                    url: '{% url "ajax_info_request" %}',
+                    type: "POST",
+                    data: {
+                        id: {{ match_id }}
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.state === "success") {
+
+                            $('#hand').text(data.hand);
+                            $('#ground').text(data.ground);
+
+                            $('#Player1').text(data.player_list[0] + "  " + data.score_list[0]);
+                            $('#Player2').text(data.player_list[1] + "  " + data.score_list[1]);
+                            if (data.player_list.length > 2) {
+                                $('#Player3').text(data.player_list[2] + "  " + data.score_list[2]);
+                            }
+                            if (data.player_list.length > 3) {
+                                $('#Player4').text(data.player_list[3] + "  " + data.score_list[3]);
+                            }
+
+                        } else {
+                            alert(data.state)
+                        }
+                    }
+
+                }
+            )
+        }
+
+        $(document).ready(
+            update_informations()
+        );
+
+        const interval = setInterval(function () {
+            update_informations();
+        }, 5000);
+
+    </script>
+{% endblock %}
