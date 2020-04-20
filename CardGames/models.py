@@ -82,7 +82,8 @@ class match_scopa(models.Model):
     last_used_on = models.DateField(null=False, default=datetime.now)
 
     last_player_to_take = models.IntegerField(null=False, blank=False, default=0)
-    # endregion
+
+    last_plays = models.TextField(null=True, blank=True, max_length=300)
 
     def initiate_new_game(self) -> bool:
         """
@@ -96,6 +97,7 @@ class match_scopa(models.Model):
         if self.match_type == 0 and self.players_amount == 2:
             shuffle(card_list)
 
+            self.last_plays = ""
             self.deck = ""
             for g in card_list:
                 self.deck += g
@@ -148,7 +150,8 @@ class match_scopa(models.Model):
             for n in tooks:
                 val += int(n[1])
             if val != int(card[1]):
-                return "La somma delle carte prese non fa la carta giocata"
+                if not (val == 10 and int(card[1]) == 0):
+                    return "La somma delle carte prese non fa la carta giocata"
 
             if len(tooks) != 1:
                 for h in self.ground:
@@ -314,7 +317,6 @@ class match_scopa(models.Model):
         self.player2_points += self.player2_scope
         self.player3_points += self.player3_scope
         self.player4_points += self.player4_scope
-
 
         if self.players_amount == 4:
             self.player1_points += self.player3_points
