@@ -7,21 +7,32 @@
             </div>
             <div class="col-md-6">
                 <div class="card">
-                    {% for m in games_list %}
-                        {% if m.2 %}
-                            {{ m.3 }} - {{ m.4 }} - {{ m.5 }} - {{ m.6 }}
-
-                            <p>
-                                <a href="{% url 'match_detail' m.2 %}">Open match</a>
-                                {% if not m.1 %}
-                                    {% if m.0 %}
-                                        <a href="{% url 'start_match' m.2 %}">Start match</a>
-                                    {% else %}
-                                        <p>Waiting for {{ m.3 }} to start the match</p>
-                                    {% endif %}
-                                {% endif %}
-                            </p>
+                    {% for m in games_set %}
+                        {{ m.player1.username }}
+                        {% if m.players_amount > 1 %}
+                            {{ m.player2.username }}
                         {% endif %}
+                        {% if m.players_amount > 2 %}
+                            {{ m.player3.username }}
+                        {% endif %}
+                        {% if m.players_amount > 3 %}
+                            {{ m.player3.username }}
+                        {% endif %}
+
+                        <p>
+                            <a href="{% url 'match_detail' m.id %}">Open match</a>
+                            {% if not m.is_started_game %}
+                                {% if m.player1_id == request.user.id %}
+                                    <a href="{% url 'start_match' m.id %}">Start match</a>
+                                {% else %}
+                                    <p>Waiting for {{ m.player1 }} to start the match</p>
+                                {% endif %}
+                                {% if not m.is_started_match %}
+                                    <p>Il link per joinare il match è il
+                                        seguente: http://127.0.0.1:8000{% url 'join_match' m.invite_data.joining_id m.invite_data.joining_passwd %}</p>
+                                {% endif %}
+                            {% endif %}
+                        </p>
                     {% endfor %}
                 </div>
             </div>

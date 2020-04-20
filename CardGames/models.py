@@ -11,6 +11,10 @@ card_list = [b + str(a) for b in ["a", "b", "c", "d"] for a in range(10)]
 
 # Create your models here.
 
+class match_invite(models.Model):
+    joining_id = models.TextField(max_length=20)
+    joining_passwd = models.TextField(max_length=20)
+
 
 class match_scopa(models.Model):
     # region data declarations
@@ -44,9 +48,16 @@ class match_scopa(models.Model):
         related_name="player_4"
     )
 
+    invite_data = models.OneToOneField(
+        match_invite,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+
     player_to_play = models.IntegerField(null=False, default=1)
 
-    players_amount = models.IntegerField(default=2, null=False)
+    players_amount = models.IntegerField(default=1, null=False)
 
     player1_hand = models.TextField(max_length=22, null=True, blank=True)
     player2_hand = models.TextField(max_length=22, null=True, blank=True)
@@ -84,6 +95,8 @@ class match_scopa(models.Model):
     last_player_to_take = models.IntegerField(null=False, blank=False, default=0)
 
     last_plays = models.TextField(null=True, blank=True, max_length=300)
+
+    # endregion
 
     def initiate_new_game(self) -> bool:
         """
@@ -123,11 +136,14 @@ class match_scopa(models.Model):
             self.is_started_match = True
             self.is_started_game = True
 
+            self.last_plays = ""
+
             self.save()
             return True
 
-    def play_card(self, player, card: str, taken: str):
+    def play_card(self, player: User, card: str, taken: str):
         tooks: List[str] = []
+        is_scopa = False
         if len(taken) != 0:
             if len(taken) % 2 == 1:
                 return "Carte prese molto dubbie"
@@ -153,6 +169,9 @@ class match_scopa(models.Model):
                 if not (val == 10 and int(card[1]) == 0):
                     return "La somma delle carte prese non fa la carta giocata"
 
+            a = ""
+            a = a.replace("ciao", "yo")
+
             if len(tooks) != 1:
                 for h in self.ground:
                     if card[1] == h:
@@ -168,6 +187,7 @@ class match_scopa(models.Model):
                 self.last_player_to_take = 1
                 if len(self.ground) == 0 and len(self.deck) != 0:
                     self.player1_scope += 1
+                    is_scopa = True
             elif player == self.player2:
                 if self.player_to_play != 2:
                     return "Non è il tuo turno"
@@ -175,6 +195,7 @@ class match_scopa(models.Model):
                 self.last_player_to_take = 1
                 if len(self.ground) == 0 and len(self.deck) != 0:
                     self.player2_scope += 1
+                    is_scopa = True
             elif self.players_amount == 4:
                 if player == self.player3:
                     if self.player_to_play != 3:
@@ -183,6 +204,7 @@ class match_scopa(models.Model):
                     self.player1_takes += card + taken
                     if len(self.ground) == 0 and len(self.deck) != 0:
                         self.player1_scope += 1
+                        is_scopa = True
                 if player == self.player4:
                     if self.player_to_play != 4:
                         return "Non è il tuo turno"
@@ -190,7 +212,10 @@ class match_scopa(models.Model):
                     self.last_player_to_take = 1
                     if len(self.ground) == 0 and len(self.deck) != 0:
                         self.player2_scope += 1
+                        is_scopa = True
             else:
+                if self.player_to_play != 3 or player != self.player3:
+                    return "Non è il tuo turno"
                 self.player3_takes += card + taken
         else:
             for h in self.ground:
@@ -250,6 +275,20 @@ class match_scopa(models.Model):
 
         self.player_to_play %= self.players_amount
         self.player_to_play += 1
+
+        temp = self.last_plays.split("||")
+
+        self.last_plays = ""
+
+        if len(temp) > 5:
+            temp = temp[1::]
+        temp.append(player.username + " ha giocato " + card)
+        if taken != "":
+            temp[-1] += " e ha preso " + taken
+            if is_scopa:
+                temp[-1] += " facendo scopa"
+
+        self.last_plays = "||".join(temp)
         self.save()
         return "success"
 
@@ -261,7 +300,7 @@ class match_scopa(models.Model):
         elif l3 > l4:
             self.player3_points += 1
         elif l4 > l3:
-            self.player2_points += 1
+            self.player4_points += 1
 
     def end_game(self) -> str:
 
@@ -285,7 +324,7 @@ class match_scopa(models.Model):
         if self.players_amount > 3:
             for iterator in self.player4_takes:
                 if "a" == iterator[0]:
-                    l4 += 1
+                    l2 += 1
 
         if l1 + l2 + l3 + l4 != 10:
             return "Le carte a denari non erano 10"
@@ -311,6 +350,55 @@ class match_scopa(models.Model):
         self.add_point_to(l1, l2, l3, l4)
 
         # TODO: implementare la settanta
+        # settanta
+
+        def settanta_pair_value(v):
+            if v == 7:
+                return 21
+            elif v == 6:
+                return 18
+            elif v == 1:
+                return 16
+            elif v == 5:
+                return 15
+            elif v == 4:
+                return 14
+            elif v == 3:
+                return 13
+            elif v == 2:
+                return 12
+            elif v == 0 or v == 9 or v == 8:
+                return 10
+
+        def settanta(taken: str):
+            tooks: List[str] = []
+            for k in range(0, len(taken), 2):
+                tooks.append(taken[k:k + 1])
+
+            maxa = 0
+            maxb = 0
+            maxc = 0
+            maxd = 0
+            for k in tooks:
+                if k[0] == "a":
+                    maxa = max(settanta_pair_value(k[1]), maxa)
+                elif k[0] == "b":
+                    maxb = max(settanta_pair_value(k[1]), maxb)
+                elif k[0] == "c":
+                    maxc = max(settanta_pair_value(k[1]), maxc)
+                elif k[0] == "b":
+                    maxd = max(settanta_pair_value(k[1]), maxd)
+            return maxa + maxb + maxc + maxd
+
+        s1 = settanta(self.player1_takes)
+        s2 = settanta(self.player2_takes)
+        if self.players_amount == 3:
+            s3 = settanta(self.player3_takes)
+            self.add_point_to(s1, s2, s3, 0)
+        elif self.players_amount == 4:
+            s3 = settanta(self.player3_takes)
+            s4 = settanta(self.player4_takes)
+            self.add_point_to(s1, s2, s3, s4)
 
         # scope
         self.player1_points += self.player1_scope
@@ -329,92 +417,3 @@ class match_scopa(models.Model):
         self.save()
 
         return "success"
-
-
-class match_invitation(models.Model):
-    invited_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="invited"
-    )
-
-    sender_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="sender"
-    )
-
-    match = models.ForeignKey(
-        match_scopa,
-        on_delete=models.CASCADE,
-        null=False
-    )
-
-    def accept(self):
-        alfa = self.match.players_amount
-        senter = self.sender_user
-        if self.match.is_started_match:
-            return 4
-
-        self.match.players_amount += 1
-        if alfa == 1:
-            self.match.player2 = self.invited_user
-            self.match.save()
-            new = games_notification(content=self.invited_user.username + " accepted your invite to play scopone!",
-                                     user=senter)
-            self.delete()
-            new.save()
-            return 1
-        elif alfa == 2:
-            self.match.player3 = self.invited_user
-            self.match.save()
-            new = games_notification(content=self.invited_user.username + " accepted your invite to play scopone!",
-                                     user=senter)
-            self.delete()
-            new.save()
-            return 1
-        elif alfa == 3:
-            self.match.player4 = self.invited_user
-            self.match.save()
-            new = games_notification(content=self.invited_user.username + " accepted your invite to play scopone!",
-                                     user=senter)
-            self.delete()
-            new.save()
-            return 1
-        elif alfa == 4:
-            self.delete()
-            new = games_notification(
-                content=self.invited_user.username + "accepted your invite to play scopone but you already have "
-                                                     "enough players!",
-                user=senter)
-            new.save()
-            return 2
-        elif alfa > 4:
-            new = games_notification(
-                content=self.invited_user.username + "accepted your invite to play scopone but something is broken in "
-                                                     "the match",
-                user=senter)
-            new.save()
-            self.delete()
-            return 3
-
-    # def decline(cls):
-
-
-class games_notification(models.Model):
-    content = models.TextField(max_length=300)
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=False,
-    )
-
-    invite = models.ForeignKey(
-        match_invitation,
-        on_delete=models.CASCADE,
-        null=True, blank=True,
-    )
-
-    seen = models.BooleanField(default=False)

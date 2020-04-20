@@ -19,6 +19,11 @@
         Your hand:
     </p>
 
+    <p>Last plays:</p>
+    <p id="last_plays">
+
+    </p>
+
     <div class="card">
         <p id="Play_card">
             Test
@@ -76,6 +81,13 @@
                             if (data.player_list[3] !== "") {
                                 $('#Player4').text(data.player_list[3] + "  " + data.score_list[3]);
                             }
+
+                            let temp = "";
+                            for (let j = 0; j < data.last_plays.length; j++) {
+                                temp += "<p>" + data.last_plays[j] + "</p>";
+                            }
+
+                            document.getElementById("last_plays").innerHTML = temp;
 
                             //TODO: aggiungere form giocare carte
                             if (data.player_to_play === data.player_num) {

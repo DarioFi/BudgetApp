@@ -153,8 +153,6 @@
                         alert("Username o password non validi")
                     }
                 }
-
-
             })
         });
 
@@ -174,7 +172,7 @@
                 },
                 dataType: 'Json',
                 success: function (data) {
-                    if (data.state == 'success') {
+                    if (data.state === 'success') {
                         location.reload();
                     } else {
                         alert(data.state);

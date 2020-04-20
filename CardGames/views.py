@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
-from .models import match_invitation, match_scopa, games_notification
+from .models import match_scopa, match_invite
 
 
 @login_required
@@ -15,23 +15,26 @@ def game_homepage(request):
         Q(player1=request.user) | Q(player2=request.user) | Q(player3=request.user) | Q(player4=request.user))
 
     prelist = []
+    glist = []
     for j in games_list:
-        t = []
-        if j.player1 == request.user:
-            t.append(True)
-        else:
-            t.append(False)
-        t.append(j.is_started_match)
-        t.append(j.id)
-        t.append(j.player1.username)
-        t.append(j.player2.username)
-        if j.players_amount > 2:
-            t.append(j.player3.username)
-        if j.players_amount > 3:
-            t.append(j.player4.username)
-        prelist.append(t)
-
-    stuff['games_list'] = prelist
+        glist.append(j)
+        # t = []
+        # if j.player1 == request.user:
+        #     t.append(True)  #t0
+        # else:
+        #     t.append(False)
+        # t.append(j.is_started_game)  #t1
+        # t.append(j.id)  # t2
+        # t.append(j.player1.username) # t3
+        # t.append(j.player2.username) # t4
+        # if j.players_amount > 2:
+        #     t.append(j.player3.username)
+        # if j.players_amount > 3:
+        #     t.append(j.player4.username)
+        # prelist.append(t)
+    #
+    # stuff['games_list'] = prelist
+    stuff['games_set'] = glist
     return render(request, "game_homepage.html", stuff)
 
 
@@ -127,11 +130,12 @@ def ajax_request_match_info(request) -> JsonResponse:
 
     data['state'] = "success"
     data['redirect'] = "false"
+    data['last_plays'] = match.last_plays.split("||")
     return JsonResponse(data)
 
 
 @login_required()
-def ajax_play_card(request):
+def ajax_play_card(request) -> JsonResponse:
     if request.method != "POST":
         return JsonResponse({'state': "Bad request"})
 
@@ -162,3 +166,40 @@ def start_match(request, match_id=0):
         if mess:
             return match_view(request, match_id=match_id)
         return render(request, 'match_error.html', {'errore': 'unable to start the match'})
+
+
+@login_required
+def join_match(request, id=-1, password=-1):
+    if id == -1 or password == -1:
+        return render(request, "match_error.html", {'errore': "Link di invito non valido :("})
+    inv = match_invite.objects.filter(joining_id=id, joining_passwd=password)
+    if len(inv) == 0:
+        return render(request, "match_error.html",
+                      {'errore': "Link di invito non valido"})
+    i: match_invite = inv[0]
+    if i.match_scopa.is_started_match:
+        return render(request, "match_error.html",
+                      {'errore': "La partita è già inziata :("})
+    if i.match_scopa.players_amount == 1:
+        if i.match_scopa.player1 == request.user:
+            return render(request, "match_error.html",
+                          {'errore': "Fai già parte di questo match"})
+        i.match_scopa.player2 = request.user
+        i.match_scopa.players_amount = 2
+    elif i.match_scopa.players_amount == 2:
+        if i.match_scopa.player1 == request.user or i.match_scopa.player2 == request.user:
+            return render(request, "match_error.html",
+                          {'errore': "Fai già parte di questo match"})
+        i.match_scopa.player3 = request.user
+        i.match_scopa.players_amount = 3
+    elif i.match_scopa.players_amount == 3:
+        if i.match_scopa.player1 == request.user or i.match_scopa.player2 == request.user or i.match_scopa.player3 == request.user:
+            return render(request, "match_error.html",
+                          {'errore': "Fai già parte di questo match"})
+        i.match_scopa.player4 = request.user
+        i.match_scopa.players_amount = 4
+    elif i.match_scopa.players_amount == 4:
+        return render(request, "match_error.html",
+                      {'errore': "La partita ha già raggiunto il limite massimo di partecipanti D:"})
+    i.match_scopa.save()
+    return match_view(request, i.match_scopa.id)

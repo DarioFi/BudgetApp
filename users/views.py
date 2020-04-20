@@ -51,7 +51,6 @@ def does_username_exists(request):
         return JsonResponse({'exist': 1})
     return JsonResponse({'exist': 0})
 
-
 def ajax_login(request):
     response = {
         'errore': 0
@@ -75,7 +74,6 @@ def ajax_login(request):
         response['errore'] = 1
 
         return JsonResponse(response)
-
 
 def ajax_register(request):
     if request.method == "POST":  # TODO: aggiungere la registrazione tramite rest api
