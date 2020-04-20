@@ -169,8 +169,7 @@ class match_scopa(models.Model):
                 if not (val == 10 and int(card[1]) == 0):
                     return "La somma delle carte prese non fa la carta giocata"
 
-            a = ""
-            a = a.replace("ciao", "yo")
+            # todo: la scopa si attiva male
 
             if len(tooks) != 1:
                 for h in self.ground:
@@ -258,7 +257,7 @@ class match_scopa(models.Model):
                 elif self.last_player_to_take == 0:
                     return "sbusciosgago erore"
                 return self.end_game()
-            if self.match_type == 0:
+            elif self.match_type == 0:
                 self.player1_hand = self.deck[-6::]
                 self.deck = self.deck[:-6]
                 self.player2_hand = self.deck[-6::]
@@ -352,8 +351,8 @@ class match_scopa(models.Model):
         # TODO: implementare la settanta
         # settanta
 
-        def settanta_pair_value(v):
-            if v == 7:
+        def settanta_pair_value(va):
+            if v:= int(va) == 7:
                 return 21
             elif v == 6:
                 return 18
@@ -373,7 +372,7 @@ class match_scopa(models.Model):
         def settanta(taken: str):
             tooks: List[str] = []
             for k in range(0, len(taken), 2):
-                tooks.append(taken[k:k + 1])
+                tooks.append(taken[k:k + 2])
 
             maxa = 0
             maxb = 0
