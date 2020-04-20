@@ -36,8 +36,8 @@ def game_homepage(request):
 
 
 @login_required
-def match_view(request, match_id=0):
-    if match_id == 0:
+def match_view(request, match_id=-1):
+    if match_id == -1:
         return render(request, "match_error.html", {'error': "Non risultano partite con questo url"})
     mat = match_scopa.objects.filter(id=match_id)
 
@@ -53,6 +53,12 @@ def match_view(request, match_id=0):
         }
         return render(request, "match_preview.html", stuff)
     else:
+        if not mat.is_started_game:
+            stuff = {
+                'match': mat
+            }
+            return render(request, "match_preview.html", stuff)
+
         stuff = {'match_id': mat.id}
 
         return render(request, "match_play.html", stuff)
@@ -77,7 +83,7 @@ def ajax_request_match_info(request) -> JsonResponse:
     match: match_scopa = match_query[0]
 
     if not match.is_started_game:
-        raise NotImplementedError("not implemented wait situation")
+        return JsonResponse({'state': "success", 'redirect': 'true'})
 
     temp_players = [match.player1.username, match.player2.username]
     temp_score = [match.player1_points, match.player2_points]
@@ -120,6 +126,7 @@ def ajax_request_match_info(request) -> JsonResponse:
     data['player_to_play'] = match.player_to_play
 
     data['state'] = "success"
+    data['redirect'] = "false"
     return JsonResponse(data)
 
 

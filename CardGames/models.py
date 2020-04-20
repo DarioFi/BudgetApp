@@ -81,6 +81,7 @@ class match_scopa(models.Model):
 
     last_used_on = models.DateField(null=False, default=datetime.now)
 
+    last_player_to_take = models.IntegerField(null=False, blank=False, default=0)
     # endregion
 
     def initiate_new_game(self) -> bool:
@@ -161,18 +162,21 @@ class match_scopa(models.Model):
                 if self.player_to_play != 1:
                     return "Non è il tuo turno"
                 self.player1_takes += card + taken
+                self.last_player_to_take = 1
                 if len(self.ground) == 0 and len(self.deck) != 0:
                     self.player1_scope += 1
             elif player == self.player2:
                 if self.player_to_play != 2:
                     return "Non è il tuo turno"
                 self.player2_takes += card + taken
+                self.last_player_to_take = 1
                 if len(self.ground) == 0 and len(self.deck) != 0:
                     self.player2_scope += 1
             elif self.players_amount == 4:
                 if player == self.player3:
                     if self.player_to_play != 3:
                         return "Non è il tuo turno"
+                    self.last_player_to_take = 1
                     self.player1_takes += card + taken
                     if len(self.ground) == 0 and len(self.deck) != 0:
                         self.player1_scope += 1
@@ -180,6 +184,7 @@ class match_scopa(models.Model):
                     if self.player_to_play != 4:
                         return "Non è il tuo turno"
                     self.player2_takes += card + taken
+                    self.last_player_to_take = 1
                     if len(self.ground) == 0 and len(self.deck) != 0:
                         self.player2_scope += 1
             else:
@@ -210,6 +215,20 @@ class match_scopa(models.Model):
         if len(self.player1_hand) == 0 and len(self.player2_hand) == 0 and len(self.player3_hand) == 0 and len(
                 self.player4_hand) == 0:
             if len(self.deck) == 0:
+                if self.last_player_to_take == 1:
+                    self.player1_takes += self.ground
+                    self.ground = ""
+                elif self.last_player_to_take == 2:
+                    self.player2_takes += self.ground
+                    self.ground = ""
+                elif self.last_player_to_take == 3:
+                    self.player3_takes += self.ground
+                    self.ground = ""
+                elif self.last_player_to_take == 4:
+                    self.player4_takes += self.ground
+                    self.ground = ""
+                elif self.last_player_to_take == 0:
+                    return "sbusciosgago erore"
                 return self.end_game()
             if self.match_type == 0:
                 self.player1_hand = self.deck[-6::]
@@ -295,6 +314,13 @@ class match_scopa(models.Model):
         self.player2_points += self.player2_scope
         self.player3_points += self.player3_scope
         self.player4_points += self.player4_scope
+
+
+        if self.players_amount == 4:
+            self.player1_points += self.player3_points
+            self.player3_points = 0
+            self.player2_points += self.player4_points
+            self.player4_points = 0
 
         self.is_started_game = False
 
