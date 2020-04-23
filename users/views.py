@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -51,6 +52,7 @@ def does_username_exists(request):
         return JsonResponse({'exist': 1})
     return JsonResponse({'exist': 0})
 
+@csrf_exempt
 def ajax_login(request):
     response = {
         'errore': 0
@@ -75,6 +77,8 @@ def ajax_login(request):
 
         return JsonResponse(response)
 
+
+@csrf_exempt
 def ajax_register(request):
     if request.method == "POST":  # TODO: aggiungere la registrazione tramite rest api
 
@@ -115,4 +119,3 @@ def is_authenticated(request):
     if request.user.is_authenticated:
         return JsonResponse({'detail': "user authenticated"})
     return JsonResponse({'detail': "valid token, unauthenticated"})
-
