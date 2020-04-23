@@ -52,6 +52,7 @@ def does_username_exists(request):
         return JsonResponse({'exist': 1})
     return JsonResponse({'exist': 0})
 
+
 @csrf_exempt
 def ajax_login(request):
     response = {

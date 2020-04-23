@@ -39,8 +39,6 @@ def home_budget(request):
     return render(request, "budget_home_view.html", stuff)
 
 
-
-
 def generate_data_categories_from_dates(date_init, date_finish, user):
     category_set = CategoryExpInc.objects.filter(user_full_id=user.id)
 
@@ -133,6 +131,17 @@ def categories_summary(request):
 
     return render(request, "categories_page.html", stuff)
 
+
+@login_required
+def accounts_summary(request):
+    return render(request, "accounts_page.html", {})
+
+
 @login_required
 def new_cateogry_form(request):
     return render(request, 'new_category_template.html', {})
+
+
+@login_required
+def new_account_form(request):
+    return render(request, 'new_account_template.html', {})

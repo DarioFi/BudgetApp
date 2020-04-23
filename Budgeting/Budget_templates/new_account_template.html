@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="m-1">
+        <h2 class="text-center  font-weight-normal py-2 px-2 px-sm-2 m-0">Create an Account</h2>
+        <hr class="border-light m-0">
+        <form method="POST" id="creazione_cateogry"> {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" name="category_name" id="category_name" class="form-control" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label>Initial balance</label>
+                <input type="number" step="0.01" id="init_expense" name="init_expense" placeholder="quantità"
+                       autocomplete="off"/>
+            </div>
+
+            <button type="button" value="create" name="create" id="submit_form_category"
+                    class="btn btn-primary btn-lg mt-4 ">Create Account!
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <script>
+
+        {#TODO: cercare live search, scrivere la roba per le api#}
+
+        $("#submit_form_category").click(function (e) {
+
+            var name = $("#category_name").val();
+            var exchange = $("#init_expense").val();
+
+
+            $.ajax({
+                url: "{% url 'ajax_create_account' %}",
+                type: "POST",
+
+                data: {
+                    'name': name,
+                    'balance': exchange
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state === "success") {
+                        location.href = '{% url 'accounts' %}'
+                    }
+                    // Do stuff
+                    //change stuff
+                    else {
+                        alert(data.state)
+
+                    }
+                }
+            })
+        })
+
+    </script>
+
+{% endblock %}

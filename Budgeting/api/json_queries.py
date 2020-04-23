@@ -72,6 +72,41 @@ def generate_categories_overview_json(request):
 
 
 @login_required
+def generate_accounts_overview_json(request):
+    acc_set = Account.objects.filter(user_full_id=request.user.id)
+
+    positive_bal, negative_bal = 0, 0
+
+    data = []
+
+    date_init = request.GET.get('date_init_categ')
+    date_end = request.GET.get('date_end_categ')
+
+    if not (date_init and date_end):
+        date_end = date.today()
+        days = timedelta(30)
+        date_init = date_end - days
+
+    for acc in acc_set:
+        alfa = Transaction.objects.filter(account_id=acc.id, user_full_id=request.user.id)
+        temp = alfa.count()
+        if date_end:
+            alfa = alfa.filter(timeDate__lt=date_end)
+        if date_init:
+            alfa = alfa.filter(timeDate__gt=date_init)
+
+        somma = sum([j.balance for j in alfa])
+        if somma > 0:
+            positive_bal += somma
+        else:
+            negative_bal += somma
+
+        data.append([acc.name, acc.balance, temp, somma, 0, alfa.count(), str(acc.created_on)[0:10]])
+
+    return JsonResponse({'categories': data})
+
+
+@login_required
 def delete_transaction_ajax_post_api(request):
     if request.method != "POST" or not request.user.is_authenticated:
         return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
@@ -148,6 +183,24 @@ def create_new_category(request):
         if CategoryExpInc.objects.filter(name=name, user_full=request.user).exists():
             return JsonResponse({'state': "A category with this name already exists!"})
         cat = CategoryExpInc(name=name, exchange=exchange, user_full=request.user)
+        cat.save(force_insert=True)
+
+        return JsonResponse({'state': 'success'})
+    return JsonResponse({'state': 'Bad request'})
+
+
+@login_required
+def create_new_account(request):
+    if request.method == 'POST':
+        name: str = request.POST.get('name')
+        try:
+            exchange: float = float(request.POST.get('balance'))
+        except:
+            return JsonResponse({'state': 'Error in the value of the initial balance'})
+
+        if Account.objects.filter(name=name, user_full=request.user).exists():
+            return JsonResponse({'state': "A category with this name already exists!"})
+        cat = Account(name=name, starting_balance=exchange, user_full=request.user, balance=exchange)
         cat.save(force_insert=True)
 
         return JsonResponse({'state': 'success'})
