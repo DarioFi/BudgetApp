@@ -1,4 +1,6 @@
 from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import render
+
 from Budgeting.models import Account, Transaction, CategoryExpInc
 from decimal import Decimal
 from datetime import date, timedelta
@@ -140,8 +142,8 @@ def create_transaction_ajax_post_api(request):
     except:
         return JsonResponse({'state': "Error in the value of amount"})
 
-    updater_account: Account = Account.objects.filter(name=account)[0]
-    updater_category: CategoryExpInc = CategoryExpInc.objects.filter(name=category)[0]
+    updater_account: Account = Account.objects.filter(name=account, user_full=request.user)[0]
+    updater_category: CategoryExpInc = CategoryExpInc.objects.filter(name=category, user_full=request.user)[0]
 
     new_transaction = Transaction(
         description=description,
@@ -205,3 +207,5 @@ def create_new_account(request):
 
         return JsonResponse({'state': 'success'})
     return JsonResponse({'state': 'Bad request'})
+
+

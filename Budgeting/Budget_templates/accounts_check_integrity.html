@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="subsitute">
+    <h2>Account balance check</h2>
+    <h5>Insert the real amount of money you have for each and let the system calculate the correction automatically</h5>
+    <p>Leave the field blank if the value is correct</p>
+
+    <div id="form_input">
+        {% for value in accounts %}
+            <h5>Account name: {{ value.1 }}</h5>
+            <p></p>
+            <input type="number" step="0.01" id="{{ value.0 }}" name="amount" placeholder="{{ value.1 }}"
+                   value="{{ value.2 }}"
+                   autocomplete="off">€
+            <p></p>
+        {% endfor %}
+    </div>
+    <button id="submit">Submit!</button>
+{% endblock %}
+</div>
+{% block javascript %}
+
+    <script>
+        $('#submit').click(function () {
+                var pairs_id = ""
+                var pairs_balance = ""
+                var doc_list = document.getElementById("form_input").children;
+                for (var j = 0; j < doc_list.length; j++) {
+                    if (doc_list[j].tagName === "INPUT") {
+                        pairs_id += "||" + doc_list[j].id;
+                        pairs_balance += "||" + doc_list[j].value;
+                    }
+                }
+                $.ajax({
+                    url: "{% url 'account integrity submit' %}",
+                    type: "POST",
+                    data: {
+                        'id_list': pairs_id,
+                        'balance_list': pairs_balance,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.state !== 'success') {
+                            alert(data.state);
+                        }
+                        $("#subsitute").html(data);
+
+                    },
+                    error: function (data) {
+                        $("#subsitute").html(data.responseText);
+                    }
+                })
+
+
+            }
+        )
+
+
+    </script>
+
+
+
+
+
+{% endblock %}

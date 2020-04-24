@@ -1,0 +1,43 @@
+<h2>Integrity correction transactions</h2>
+<h5>The following list contains all the transaction that will be generated automatically in order to syncronize your
+    real accounts balances with the one that we calculated using the transactions you created</h5>
+<p>The category that will be used for these transactions is called [ACCOUNT INTEGRITY CATEGORY]</p>
+
+{% if transactions %}
+    <ul>
+        {% for alfa in transactions %}
+            <li>{{ alfa.0 }} || {{ alfa.1 }}€</li>
+        {% endfor %}
+    </ul>
+
+    <button id="confirm data">Confirm</button>
+
+    <script>
+
+        document.getElementById("confirm data").onclick = function () {
+
+            $.ajax({
+                url: "{% url 'transaction integrity confirm' %}",
+                type: "POST",
+                data: {
+                    ids: "{% for a in transactions %} {{ a.2 }}|| {% endfor %}",
+                    balances: "{% for a in transactions %} {{ a.1 }}|| {% endfor %}"
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state === "success") {
+                        window.location.href = "{% url 'transactions' %}";
+                    } else {
+                        alert(data.state)
+                    }
+                }
+            })
+        }
+
+
+    </script>
+{% else %}
+
+    <p>Nessun cambiamento rilevato</p>
+
+{% endif %}

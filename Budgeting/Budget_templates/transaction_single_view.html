@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+{#TODO: non funziona la cancellazione#}
 <td> {{ transaction.account.name }}  </td>
 <td> {{ transaction.timeDate }}  </td>
 <td> {{ transaction.category.name }}  </td>
@@ -26,7 +27,7 @@
         if (confirm("Sicuro di voler eliminare la transazione?")) {
 
             $.ajax({
-                url: '/budget/ajax/del_transaction',
+            url: '/budget/ajax/del_transaction',
                 type: "POST",
                 data: {
                     'id': {{ transaction.id }},

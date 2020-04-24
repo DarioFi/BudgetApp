@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from Budgeting.api.json_queries import *
+from datetime import date
 
 
 # Create your views here.
@@ -124,11 +125,9 @@ def test_page(request):
 @login_required
 def categories_summary(request):
     # cat_set = CategoryExpInc.objects.filter(user_full_id=request.user.id)
-
     stuff = {
 
     }
-
     return render(request, "categories_page.html", stuff)
 
 
@@ -138,10 +137,104 @@ def accounts_summary(request):
 
 
 @login_required
-def new_cateogry_form(request):
+def new_category_form(request):
     return render(request, 'new_category_template.html', {})
 
 
 @login_required
 def new_account_form(request):
     return render(request, 'new_account_template.html', {})
+
+
+@login_required
+def accounts_check(request):
+    account_query = Account.objects.filter(user_full=request.user)
+    stuff = {
+        'accounts': [[j.id, j.name, j.balance] for j in account_query]
+    }
+
+    return render(request, 'accounts_check_integrity.html', stuff)
+
+
+@login_required
+def account_integrity_submit(request):
+    if request.method != 'POST':
+        return JsonResponse({'state': "Invalid request"})
+
+    id_list_temp = request.POST.get('id_list').split("||")
+    balance_list_temp = request.POST.get('balance_list').split("||")
+    acc_lis = Account.objects.filter(user_full=request.user)
+
+    id_list = [int(j) for j in id_list_temp if j != ""]
+    balance_list = [Decimal(j) for j in balance_list_temp if j != ""]
+
+    ajax, server = 0, 0
+    transactions_list = []
+    while ajax < len(id_list) and server < len(acc_lis):
+        if id_list[ajax] == acc_lis[server].id:
+            if balance_list[ajax] != acc_lis[server].balance:
+                transactions_list.append(
+                    [acc_lis[server].name, str(acc_lis[server].balance - balance_list[ajax]), acc_lis[server].id])
+            ajax += 1
+            server += 1
+        elif id_list[ajax] > acc_lis[server].id:
+            server += 1
+        elif id_list[ajax] < acc_lis[server].id:
+            ajax += 1
+
+    stuff = {
+        'transactions': transactions_list,
+    }
+
+    return render(request, 'integrity_transactions_page.html', stuff)
+
+
+@login_required
+def transaction_integrity_confirm(request):
+    if request.method != "POST":
+        return JsonResponse({'state': 'invalid request'})
+
+    ids = [int(j) for j in request.POST.get('ids').split("||") if j.replace(" ", "") != ""]
+    balances = [Decimal(j) for j in request.POST.get('balances').split("||") if j.replace(" ", "") != ""]
+
+    category_integrity = CategoryExpInc.objects.filter(user_full=request.user, name="[ACCOUNT INTEGRITY CATEGORY]")
+    if category_integrity.count() == 0:
+        category_integrity = CategoryExpInc(
+            user_full=request.user,
+            exchange=0.0,
+            name="[ACCOUNT INTEGRITY CATEGORY]"
+        )
+        category_integrity.save()
+    else:
+        category_integrity = category_integrity[0]
+
+    acc_list = []
+    trans_list = []
+
+    for h in range(len(ids)):
+        account = Account.objects.filter(user_full=request.user, id=ids[h])
+        if account.count() == 0:
+            return JsonResponse({'state': "Account non trovato, erore"})
+        acc_list.append(account[0])
+
+        new_transaction = Transaction(
+            description="Integrity check",
+            timeDate=date.today(),
+            balance=balances[h],
+            account=acc_list[-1],
+            category=category_integrity,
+            user_full=request.user
+        )
+
+        trans_list.append(new_transaction)
+
+        category_integrity.exchange -= balances[h]
+        acc_list[-1].balance -= balances[h]
+
+    category_integrity.save()
+    for h in trans_list:
+        h.save()
+    for h in acc_list:
+        h.save()
+
+    return JsonResponse({'state': "success"})
