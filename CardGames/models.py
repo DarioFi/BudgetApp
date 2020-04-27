@@ -352,7 +352,7 @@ class match_scopa(models.Model):
         # settanta
 
         def settanta_pair_value(va):
-            if v:= int(va) == 7:
+            if v := int(va) == 7:
                 return 21
             elif v == 6:
                 return 18
@@ -416,3 +416,53 @@ class match_scopa(models.Model):
         self.save()
 
         return "success"
+
+
+class match_against_AI(models.Model):
+    player = models.OneToOneField(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+
+    player1_hand = models.TextField(max_length=22, null=True, blank=True)
+    ai_hand = models.TextField(max_length=22, null=True, blank=True)
+
+    player1_points = models.IntegerField(null=True, blank=True, default=0)
+    ai_points = models.IntegerField(null=True, blank=True, default=0)
+
+    player1_takes = models.TextField(max_length=81, null=True, blank=True)
+    ai_takes = models.TextField(max_length=81, null=True, blank=True)
+
+    player1_scope = models.IntegerField(null=True, blank=True, default=0)
+    ai_scope = models.IntegerField(null=True, blank=True, default=0)
+
+    last_plays = models.TextField(null=True, blank=True, max_length=300)
+
+    ground = models.TextField(max_length=22, null=True, blank=True)
+    deck = models.TextField(max_length=82, null=True, blank=True)
+
+    last_used_on = models.DateField(null=False, default=datetime.now)
+
+    last_player_to_take = models.IntegerField(null=False, blank=False, default=0)
+
+    is_started_game = models.BooleanField(default=False)
+
+    def user_plays(self, card, taken):
+        raise Exception("NOT IMPLEMENTED")
+
+    def ai_plays(self, card, taken):
+        raise Exception("NOT IMPLEMENTED")
+
+    def moves_generation(self, card, taken):
+        raise Exception("NOT IMPLEMENTED")
+
+    def end_game(self):
+        raise Exception("NOT IMPLEMENTED")
+
+    def initiate_game(self):
+        raise Exception("NOT IMPLEMENTED")
+
+
+

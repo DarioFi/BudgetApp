@@ -41,8 +41,12 @@
         <label>Amount</label>
         <input type="number" step="0.01" id="amount" name="amount" placeholder="quantità" autocomplete="off"/>
 
-        <button type="button" value="create" name="create" id="submit_form"
-                class="btn btn-primary btn-lg mt-4 ">Add transaction
+        <button type="button" value="create" name="create" id="deposit_form"
+                class="btn btn-primary btn-lg mt-4 ">Deposit money
+        </button>
+
+        <button type="button" value="create" name="create" id="withdraw_form"
+                class="btn btn-primary btn-lg mt-4 ">Withdraw money
         </button>
 
     </form>
@@ -54,7 +58,47 @@
 
     {#TODO: cercare live search, scrivere la roba per le api#}
 
-    $("#submit_form").click(function (e) {
+    $("#deposit_form").click(function (e) {
+
+        var descrizione = $("#descrizione").val();
+        var account = $("#Account_select").val();
+        var categoria = $("#Categoria_select").val();
+        var date = $("#date_time").val();
+        var amount = -$("#amount").val();
+
+
+        $.ajax({
+            url: "{% url 'ajax_create_transaction' %}",
+            type: "POST",
+
+            data: {
+                'description': descrizione,
+                'account': account,
+                'category': categoria,
+                'date': date,
+                'amount': amount
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.state === "success") {
+                    $("#descrizione").val("");
+                    $("#Account_select").val("");
+                    $("#Categoria_select").val("");
+                    $("#date_time").val("");
+                    $("#amount").val("");
+                    location.reload();
+                }
+                    // Do stuff
+                //change stuff
+                else {
+                    alert(data.state)
+
+                }
+            }
+        })
+    })
+
+    $("#withdraw_form").click(function (e) {
 
         var descrizione = $("#descrizione").val();
         var account = $("#Account_select").val();
@@ -84,7 +128,7 @@
                     $("#amount").val("");
                     location.reload();
                 }
-                // Do stuff
+                    // Do stuff
                 //change stuff
                 else {
                     alert(data.state)
