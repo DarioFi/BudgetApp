@@ -1,6 +1,9 @@
+from django.core import serializers
+from django.http import HttpResponse
 from django.shortcuts import render
 from Budgeting.api.json_queries import *
 from datetime import date
+import json
 
 
 # Create your views here.
@@ -120,7 +123,8 @@ def test_page(request):
 
 
 # TODO: aggiungere il changelog
-
+# TODO: transazioni ricorrenti
+# TODO: export data
 
 @login_required
 def categories_summary(request):
@@ -238,3 +242,62 @@ def transaction_integrity_confirm(request):
         h.save()
 
     return JsonResponse({'state': "success"})
+
+
+@login_required
+def export_user_data_all(request):
+    accounts = Account.objects.filter(user_full=request.user)
+    categories = CategoryExpInc.objects.filter(user_full=request.user)
+    transactions = Transaction.objects.filter(user_full=request.user)
+
+    file = {
+        'User': {
+            "name": request.user.username,
+            "date joined": str(request.user.date_joined),
+            "email": request.user.email,
+            "last login": str(request.user.last_login),
+            "first name": request.user.first_name,
+            "last name": request.user.last_name,
+        }
+    }
+
+    account_list_dict = []
+    for a in accounts:
+        new_dict = {
+            'name': a.name,
+            'balance': float(a.balance),
+            'initial balance': float(a.starting_balance),
+            'creation date': str(a.created_on)
+        }
+        account_list_dict.append(new_dict)
+    file['Accounts'] = account_list_dict
+
+    categories_list_dict = []
+    for a in categories:
+        new_dict = {
+            'name': a.name,
+            'balance': float(a.exchange),
+            'creation date': str(a.created_on)
+        }
+        categories_list_dict.append(new_dict)
+    file['Categories'] = categories_list_dict
+
+    trans_list_dict = []
+    for t in transactions:
+        new_dict = {
+            'creation date': str(t.dateAdded),
+            'category': t.category.name,
+            'account': t.account.name,
+            'amount': float(t.balance),
+            'description': t.description
+        }
+        trans_list_dict.append(new_dict)
+    file['Transactions'] = trans_list_dict
+
+    json_query = json.dumps(file, indent=4)
+
+    filename = "user_data_{}.json".format(date.today())
+    content = json_query
+    response = HttpResponse(content, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    return response
