@@ -11,4 +11,5 @@ urlpatterns = [
     path('users/', include('django.contrib.auth.urls')),
     path('budget/', include('Budgeting.urls')),
     path('games/', include('CardGames.urls')),
+    path('changelog', changelog, name="changelog")
 ]

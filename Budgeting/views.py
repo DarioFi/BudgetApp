@@ -301,3 +301,6 @@ def export_user_data_all(request):
     response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
     return response
+
+# todo: aggiungere una guida all'uso
+
