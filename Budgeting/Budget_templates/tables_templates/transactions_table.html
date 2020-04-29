@@ -1,0 +1,178 @@
+{% if not_search %}
+{% else %}
+    <h4 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Filters</h4>
+    <div class="">
+        <div class="row no-gutters row-bordered">
+            <div class="col-md-4">
+                <label class="form-label">Descrizione</label>
+                <input type="text" id="description_filter" class="form-control" autocomplete="off">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Account</label>
+                <select id="acc_filter">
+                    <option value="All">All</option>
+                    {% for account in account_list %}
+                        <option value="{{ account.name }}">{{ account.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Categoria</label>
+                <select id="cat_filter">
+                    <option value="All">All</option>
+                    {% for category in categories_names %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="it-datepicker-wrapper">
+                <div class="form-group">
+                    <input class="form-control it-date-datepicker" id="date_init" type="date"
+                           placeholder="inserisci la data in formato gg/mm/aaaa">
+                    <label for="date1">Date init</label>
+                </div>
+            </div>
+            <div class="it-datepicker-wrapper">
+                <div class="form-group">
+                    <input class="form-control it-date-datepicker" id="date_end" type="date"
+                           placeholder="inserisci la data in formato gg/mm/aaaa">
+                    <label for="date1">Date end</label>
+                </div>
+            </div>
+        </div>
+        <button id="add_filter_butt">Search</button>
+    </div>
+{% endif %}
+<table class="table table-bordered m-0" id="dtBasicExample" role="grid" aria-describedby="DataTables_Table_0_info">
+    <thead class="thead-light">
+    <tr>
+        <th scope="col">Account</th>
+        <th scope="col">Date</th>
+        <th scope="col">Category</th>
+        <th scope="col">Description</th>
+        <th scope="col">Payment</th>
+        <th scope="col">Deposit</th>
+        {% if not_delete %}
+        {% else %}
+            <th scope="col">Delete</th>
+        {% endif %}
+    </tr>
+    </thead>
+
+    <tbody id="transaction_list_body">
+    </tbody>
+</table>
+
+<script>
+
+    function do_search() {
+
+        request = {};
+
+        acc_filter = $("#acc_filter").val();
+        if (acc_filter != "All") request['acc_filter'] = acc_filter;
+        cat_filter = $("#cat_filter").val();
+        if (cat_filter != "All") request['cat_filter'] = cat_filter;
+        description_filter = $("#description_filter").val();
+        request['description_filter'] = description_filter;
+        date_init = $("#date_init").val();
+        if (date_init) request['date_init'] = date_init;
+        date_end = $("#date_end").val();
+        if (date_end) request['date_end'] = date_end;
+
+
+        $.get("{% url 'json_transactions' %}",
+            request,
+            function (data, status) {
+
+                table = document.getElementById("transaction_list_body");
+                while (table.childElementCount != 0) table.children[0].remove();
+                data.transactions.forEach(create_elem);
+
+
+                function create_elem(item, index) {
+
+                    let riga = document.createElement("tr");
+
+
+                    var kek = document.createElement("td");
+                    kek.innerText = item.name;
+                    riga.appendChild(kek);
+
+                    kek = document.createElement("td");
+                    kek.innerText = item.timedate;
+                    riga.appendChild(kek);
+
+                    kek = document.createElement("td");
+                    kek.innerText = item.category_name;
+                    riga.appendChild(kek);
+
+                    kek = document.createElement("td");
+                    kek.innerText = item.description;
+                    riga.appendChild(kek);
+
+
+                    if (item.balance > 0) {
+                        kek = document.createElement("td");
+                        kek.innerText = "€ ";
+                        kek.innerText += item.balance;
+                        riga.appendChild(kek);
+                        kek = document.createElement("td");
+                        riga.appendChild(kek);
+                    } else {
+                        let kek = document.createElement("td");
+                        riga.appendChild(kek);
+                        kek = document.createElement("td");
+                        kek.innerText = "€ ";
+                        kek.innerText += -item.balance;
+                        riga.appendChild(kek);
+                    }
+                    {% if not_delete %}
+                    {% else %}
+                        kek = document.createElement("button");
+                        kek.id = "Delete_json";
+                        kek.value = item.id;
+                        kek.innerHTML = "<i class=\"material-icons\">delete_forever</i>";
+
+                        kek.onclick = function () {
+                            const valuer = this.value;
+                            if (confirm("Sicuro di voler eliminare la transazione?")) {
+                                $.ajax({
+                                    url: "{% url 'del transaction api' %}",
+                                    type: "POST",
+                                    data: {
+                                        'id': valuer,
+                                    },
+
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        if (data.state === 'success') {
+                                            $("#add_filter_butt").click();
+                                        } else {
+                                            alert(data.state)
+                                        }
+                                    }
+                                })
+                            }
+                        };
+                        let f = document.createElement("td");
+                        f.appendChild(kek);
+
+                        riga.appendChild(f);
+                    {% endif %}
+
+
+                    table.appendChild(riga);
+                }
+
+            }
+        );
+    }
+
+    $("#add_filter_butt").click(do_search);
+
+    $(document).ready(do_search);
+
+</script>

@@ -87,27 +87,26 @@ def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiusta
 
 @login_required
 def transactions_overview(request):
-    acc_filter = request.GET.get('acc_filter')
-    cat_filter = request.GET.get('cat_filter')
-    description_filter = request.GET.get('description_filter')
+    # acc_filter = request.GET.get('acc_filter')
+    # cat_filter = request.GET.get('cat_filter')
+    # description_filter = request.GET.get('description_filter')
 
-    objs = Transaction.objects.filter(user_full_id=request.user.id)
+    # objs = Transaction.objects.filter(user_full_id=request.user.id)
 
-    if acc_filter:
-        objs = objs.filter(account__name=acc_filter)
-    if cat_filter:
-        objs = objs.filter(category__name=cat_filter)
-    if description_filter:
-        objs = objs.filter(description__contains=description_filter)
+    # if acc_filter:
+    #     objs = objs.filter(account__name=acc_filter)
+    # if cat_filter:
+    #     objs = objs.filter(category__name=cat_filter)
+    # if description_filter:
+    #     objs = objs.filter(description__contains=description_filter)
 
-    transaction_list = [h for h in objs]
+    # transaction_list = [h for h in objs]
 
-    transaction_list.sort(key=lambda x: x.timeDate, reverse=True)
+    # transaction_list.sort(key=lambda x: x.timeDate, reverse=True)
 
     categories_list_names = [j.name for j in CategoryExpInc.objects.filter(user_full_id=request.user.id)]
     account_list = [j for j in Account.objects.filter(user_full_id=request.user.id)]
     stuff = {
-        'transaction_list': transaction_list,
         'context': "transactions_overview",
         'categories_names': categories_list_names,
         'account_list': account_list
@@ -190,7 +189,7 @@ def account_integrity_submit(request):
         'transactions': transactions_list,
     }
 
-    return render(request, 'integrity_transactions_page.html', stuff)
+    return render(request, 'integrity_accounts/integrity_transactions_page.html', stuff)
 
 
 @login_required
@@ -302,5 +301,10 @@ def export_user_data_all(request):
     response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
     return response
 
+
 # todo: aggiungere una guida all'uso
 
+@login_required
+def insghit_page(request):
+
+    return render(request, 'insight_page.html', {})

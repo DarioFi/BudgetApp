@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import home_budget, test_page, transactions_overview, categories_summary, new_category_form, \
     accounts_summary, new_account_form, accounts_check, account_integrity_submit, transaction_integrity_confirm, \
-    export_user_data_all
+    export_user_data_all, insghit_page
 
 urlpatterns = [
     path('', home_budget),
@@ -15,5 +15,6 @@ urlpatterns = [
     path('new_category', new_category_form, name="new_category_form"),
     path('new_account', new_account_form, name="new_account_form"),
     path('api/', include('Budgeting.api.urls')),
-    path('export_data', export_user_data_all, name="export data")
+    path('export_data', export_user_data_all, name="export data"),
+    path('insight', insghit_page, name="insight page")
 ]

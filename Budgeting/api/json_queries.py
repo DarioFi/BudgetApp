@@ -7,6 +7,8 @@ from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 
 
+# todo: migliorare i formati delle api
+
 @login_required
 def generate_json_transaction_get(request):
     transactions = Transaction.objects.filter(user_full_id=request.user.id)
@@ -26,9 +28,20 @@ def generate_json_transaction_get(request):
     if description_filter:
         transactions = transactions.filter(description__contains=description_filter)
 
-    list = [[h.account.name, h.timeDate, h.category.name, h.description, h.balance, h.id] for h in transactions]
+    list = [
+        # h.account.name, h.timeDate, h.category.name, h.description, h.balance, h.id
+        {
+            'name': h.account.name,
+            'timedate': h.timeDate,
+            'category_name': h.category.name,
+            'description': h.description,
+            'balance': h.balance,
+            'id': h.id
+        }
 
-    list.sort(key=lambda x: x[1], reverse=True)
+        for h in transactions]
+
+    list.sort(key=lambda x: x['timedate'], reverse=True)
 
     stuff = {
         'lenght': len(list),
@@ -39,7 +52,7 @@ def generate_json_transaction_get(request):
 
 
 @login_required
-def generate_categories_overview_json(request):
+def generate_categories_overview_json(request):  # todo: adjust data
     cat_set = CategoryExpInc.objects.filter(user_full_id=request.user.id)
 
     positive_bal, negative_bal = 0, 0
@@ -74,7 +87,7 @@ def generate_categories_overview_json(request):
 
 
 @login_required
-def generate_accounts_overview_json(request):
+def generate_accounts_overview_json(request):  # todo: adjust data
     acc_set = Account.objects.filter(user_full_id=request.user.id)
 
     positive_bal, negative_bal = 0, 0
@@ -207,5 +220,3 @@ def create_new_account(request):
 
         return JsonResponse({'state': 'success'})
     return JsonResponse({'state': 'Bad request'})
-
-
