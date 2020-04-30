@@ -1,3 +1,5 @@
+from django.views.decorators import csrf
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -6,8 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from Budgeting.models import Transaction, CategoryExpInc, Account
 
 
+@csrf_exempt
 @api_view(['GET', ])
-# @permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated, ))
 def rest_api_transactions_overview(request):
     transactions = Transaction.objects.filter(user_full_id=request.user.id)
     acc_filter = request.GET.get('acc_filter')
@@ -25,6 +28,7 @@ def rest_api_transactions_overview(request):
     description_filter = request.GET.get('description_filter')
     if description_filter:
         transactions = transactions.filter(description__contains=description_filter)
+
 
     list = [{
         'name': h.account.name,

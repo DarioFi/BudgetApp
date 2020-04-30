@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+
+
     {{ state }}
     {{ account.name }}
     <div class="container">
@@ -14,12 +16,6 @@
         Chart.defaults.global.defaultFontSize = 18;
         Chart.defaults.global.defaultFontColor = '#777';
 
-{#        {% for data in balance_date %}#}
-{#            {#}
-{#                x: {{ data.0 }},#}
-{#                y: {{ data.1|safe }}#}
-{#                    }#}
-{#        {% endfor %}#}
         var scatterChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -36,8 +32,20 @@
             options: {
                 scales: {
                     xAxes: [{
-                        type: 'linear',
-                        position: 'bottom'
+                        type: 'time',
+                        time: {
+                            displayFormats: {
+                                'millisecond': 'YY-MM-DD',
+                                'second': 'YY MM-DD',
+                                'minute': 'YY MM DD',
+                                'hour': 'YY-MM-DD',
+                                'day': 'YY-MM-DD',
+                                'week': 'YY MM DD',
+                                'month': 'YY MM DD',
+                                'quarter': 'YY MM DD',
+                                'year': 'YY MM DD',
+                            }
+                        }
                     }]
                 }
             }
@@ -45,4 +53,10 @@
     </script>
 
 
+    <select id="acc_filter" hidden="hidden">
+        <option value="{{ account.name }}">All</option>
+    </select>
+    {% with not_search=1 %}
+        {% include 'tables_templates/transactions_table.html' %}
+    {% endwith %}
 {% endblock %}
