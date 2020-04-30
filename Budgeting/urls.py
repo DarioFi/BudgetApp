@@ -15,5 +15,8 @@ urlpatterns = [
     path('new_account', new_account_form, name="new_account_form"),
     path('api/', include('Budgeting.api.urls')),
     path('export_data', export_user_data_all, name="export data"),
-    path('insight_month', insghit_page_month, name="insight page month")
+    path('insight_month', insghit_page_month, name="insight page month"),
+
+
+    path('load_data_only_debug', subsituite_database)
 ]

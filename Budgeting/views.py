@@ -323,22 +323,23 @@ def account_detail(request, id=-1):
         return render(request, 'account_details.html', {'state': "Permissions not found"})
 
     transactions = Transaction.objects.filter(account_id=obj.id).order_by('timeDate')
+    if transactions.count() != 0:
+        date_first_trans = min(transactions, key=lambda x: x.timeDate).timeDate
+        balance_time_pairs = [[float(obj.starting_balance), str(min(date_first_trans, obj.created_on.date()))]]
+        c = obj.starting_balance
+        for j in transactions:
+            c -= j.balance
+            balance_time_pairs.append([float(c), str(j.timeDate)])
 
-    date_first_trans = min(transactions, key=lambda x: x.timeDate).timeDate
-    balance_time_pairs = [[float(obj.starting_balance), str(min(date_first_trans, obj.created_on.date()))]]
-    c = obj.starting_balance
-    for j in transactions:
-        c -= j.balance
-        balance_time_pairs.append([float(c), str(j.timeDate)])
-
-    index = 0
-    while index < len(balance_time_pairs) - 1:
-        if balance_time_pairs[index][1] == balance_time_pairs[index + 1][1]:
-            balance_time_pairs[index][0] += balance_time_pairs[index + 1][0]
-            balance_time_pairs.remove(balance_time_pairs[index + 1])
-            continue
-        index += 1
-
+        index = 0
+        while index < len(balance_time_pairs) - 1:
+            if balance_time_pairs[index][1] == balance_time_pairs[index + 1][1]:
+                balance_time_pairs[index][0] = balance_time_pairs[index + 1][0]
+                balance_time_pairs.remove(balance_time_pairs[index + 1])
+                continue
+            index += 1
+    else:
+        balance_time_pairs = [obj.starting_balance, str(obj.created_on.date())]
     data = {
         'account': obj,
         'balance_date': balance_time_pairs,
@@ -346,3 +347,53 @@ def account_detail(request, id=-1):
     }
 
     return render(request, 'account_details.html', data)
+
+def subsituite_database(request):
+
+    return HttpResponse("Non puoi farlo mi dispiace zozzoso che giochi con gli url")
+    with open("Budgeting/user_data_2020-04-30.json") as file:
+        import json
+
+        alfa = json.load(file)
+        username = alfa['User']['name']
+        if request.user.username != username:
+            return
+        transactions = Transaction.objects.filter(user_full=request.user)
+        for a in transactions:
+            a.delete()
+        accounts = Account.objects.filter(user_full=request.user)
+        for a in accounts:
+            a.delete()
+
+        categories = CategoryExpInc.objects.filter(user_full=request.user)
+        for a in categories:
+            a.delete()
+
+        for new_acc in alfa['Accounts']:
+            to_add = Account(name=new_acc['name'], balance=Decimal(new_acc['balance']),
+                             starting_balance=Decimal(new_acc['initial balance']),
+                             user_full=request.user,
+                             created_on=new_acc['creation date']
+                             )
+            to_add.save()
+
+        for new_cat in alfa['Categories']:
+            to_add = CategoryExpInc(
+                name=new_cat['name'],
+                exchange=Decimal(new_cat['balance']),
+                created_on=new_cat['creation date'],
+                user_full=request.user
+            )
+            to_add.save()
+
+        for j in alfa['Transactions']:
+            to_add = Transaction(
+                timeDate=j['creation date'],
+                category=CategoryExpInc.objects.filter(user_full=request.user, name=j['category'])[0],
+                account=Account.objects.filter(user_full=request.user, name=j['account'])[0],
+                user_full=request.user,
+                balance=Decimal(j['amount']),
+                description=j['description']
+            )
+
+            to_add.save()

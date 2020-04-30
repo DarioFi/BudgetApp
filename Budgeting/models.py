@@ -10,7 +10,7 @@ default_user = User.objects.first()
 
 
 class Account(models.Model):
-    name = models.TextField(max_length=30, null=False, unique=True)
+    name = models.TextField(max_length=30, null=False)
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
 
     starting_balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0.0)
@@ -30,7 +30,7 @@ class Account(models.Model):
 
 
 class CategoryExpInc(models.Model):
-    name = models.TextField(max_length=30, null=False, unique=True)
+    name = models.TextField(max_length=30, null=False)
     exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
     created_on = models.DateTimeField(editable=False, default=timezone.now)
 
