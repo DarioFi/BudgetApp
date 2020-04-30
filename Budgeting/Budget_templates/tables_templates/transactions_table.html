@@ -97,8 +97,8 @@
                     let riga = document.createElement("tr");
 
 
-                    var kek = document.createElement("td");
-                    kek.innerText = item.name;
+                    kek = document.createElement("td");
+                    kek.innerHTML = '<a href="{% url 'account detail' 1 %}">'.replace(1,item.account_id) + item.account_name + '</a>';
                     riga.appendChild(kek);
 
                     kek = document.createElement("td");

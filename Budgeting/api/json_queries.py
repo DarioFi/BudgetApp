@@ -31,7 +31,8 @@ def generate_json_transaction_get(request):
     list = [
         # h.account.name, h.timeDate, h.category.name, h.description, h.balance, h.id
         {
-            'name': h.account.name,
+            'account_name': h.account.name,
+            'account_id': h.account.id,
             'timedate': h.timeDate,
             'category_name': h.category.name,
             'description': h.description,
@@ -116,7 +117,18 @@ def generate_accounts_overview_json(request):  # todo: adjust data
         else:
             negative_bal += somma
 
-        data.append([acc.name, acc.balance, temp, somma, 0, alfa.count(), str(acc.created_on)[0:10]])
+        # data.append([acc.name, acc.balance, temp, somma, 0, alfa.count(), str(acc.created_on)[0:10]])
+
+        data.append({
+            'account_name': acc.name,
+            'account_balance': acc.balance,
+            'account_id': acc.id,
+            'amount_transactions': temp,
+            'past_n_days': somma,
+            'past_n_days_share': 0,
+            'transactions_last_n_days': alfa.count(),
+            'created_on': str(acc.created_on)[:10]
+        })
 
     return JsonResponse({'categories': data})
 
@@ -220,3 +232,21 @@ def create_new_account(request):
 
         return JsonResponse({'state': 'success'})
     return JsonResponse({'state': 'Bad request'})
+
+
+@login_required
+def json_generate_insight_data(request):
+    if request.method != "GET":
+        return JsonResponse({'state': "bad request"})
+
+    date_init = request.GET.get('date_init')
+    date_end = request.GET.get('date_end')
+    # todo: finirla
+    raise NotImplementedError
+
+
+def json_account_detailS(request):
+    if request.method != "GET":
+        return JsonResponse({'state': "bad request"})
+
+    # todo: finirla

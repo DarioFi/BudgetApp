@@ -27,8 +27,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'export data' %}">Export data</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'insight page' %}">Insight</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Insight
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'insight page month' %}">Month</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'game_home' %}">Card Games</a>

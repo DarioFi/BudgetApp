@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{#    TODO: finire l'insight per giorno mese anno ecc.#}
+        <div class="row no-gutters">
+
+            <div class="col-md-8">
+                <div class="card">
+                <div id="Accounts div">
+                    <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Accounts</h2>
+                    {% include 'tables_templates/accounts_tables.html' %}
+                </div>
+                <div id="Categories div">
+                    <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Categories</h2>
+                    {% include 'tables_templates/categories_table.html' %}
+                </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    {% with not_search=1 not_delete=1 %}
+                        <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Transactions</h2>
+                        {% include 'tables_templates/transactions_table.html' %}
+                    {% endwith %}
+                </div>
+            </div>
+    </div>
+
+{% endblock %}

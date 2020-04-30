@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+    {{ state }}
+    {{ account.name }}
+    <div class="container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        let ctx = document.getElementById('myChart').getContext('2d');
+
+        // Global Options
+        Chart.defaults.global.defaultFontFamily = 'Lato';
+        Chart.defaults.global.defaultFontSize = 18;
+        Chart.defaults.global.defaultFontColor = '#777';
+
+{#        {% for data in balance_date %}#}
+{#            {#}
+{#                x: {{ data.0 }},#}
+{#                y: {{ data.1|safe }}#}
+{#                    }#}
+{#        {% endfor %}#}
+        var scatterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Balance over time',
+                    data: [{% for data in balance_date %}
+                        {
+                            y: {{ data.0 }},
+                            x: new Date("{{ data.1|safe }}")
+                        },
+                    {% endfor %}]
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'linear',
+                        position: 'bottom'
+                    }]
+                }
+            }
+        });
+    </script>
+
+
+{% endblock %}

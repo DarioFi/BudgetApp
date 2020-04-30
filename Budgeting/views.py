@@ -1,3 +1,5 @@
+import datetime
+
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -305,6 +307,42 @@ def export_user_data_all(request):
 # todo: aggiungere una guida all'uso
 
 @login_required
-def insghit_page(request):
+def insghit_page_month(request):
+    return render(request, 'insight_page_month.html', {})
 
-    return render(request, 'insight_page.html', {})
+
+@login_required
+def account_detail(request, id=-1):
+    if id == -1:
+        return render(request, 'account_details.html', {'state': "bad request"})
+    obj = Account.objects.filter(id=id)
+    if len(obj) == 0:
+        return render(request, 'account_details.html', {'state': "Not found"})
+    obj = obj[0]
+    if obj.user_full_id != request.user.id:
+        return render(request, 'account_details.html', {'state': "Permissions not found"})
+
+    transactions = Transaction.objects.filter(account_id=obj.id)
+
+    date_first_trans = min(transactions, key=lambda x: x.timeDate).timeDate
+    balance_time_pairs = [[float(obj.starting_balance), str(min(date_first_trans, obj.created_on.date()))]]
+    c = obj.starting_balance
+    for j in transactions:
+        c -= j.balance
+        balance_time_pairs.append([float(c), str(j.timeDate)])
+
+    index = 0
+    while index < len(balance_time_pairs) - 1:
+        if balance_time_pairs[index][1] == balance_time_pairs[index + 1][1]:
+            balance_time_pairs[index][0] += balance_time_pairs[index + 1][0]
+            balance_time_pairs.remove(balance_time_pairs[index + 1])
+            continue
+        index += 1
+
+    data = {
+        'account': obj,
+        'balance_date': balance_time_pairs,
+        'state': "success",
+    }
+
+    return render(request, 'account_details.html', data)
