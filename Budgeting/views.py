@@ -322,7 +322,7 @@ def account_detail(request, id=-1):
     if obj.user_full_id != request.user.id:
         return render(request, 'account_details.html', {'state': "Permissions not found"})
 
-    transactions = Transaction.objects.filter(account_id=obj.id)
+    transactions = Transaction.objects.filter(account_id=obj.id).order_by('timeDate')
 
     date_first_trans = min(transactions, key=lambda x: x.timeDate).timeDate
     balance_time_pairs = [[float(obj.starting_balance), str(min(date_first_trans, obj.created_on.date()))]]

@@ -88,7 +88,7 @@ def generate_categories_overview_json(request):  # todo: adjust data
 
 
 @login_required
-def generate_accounts_overview_json(request):  # todo: adjust data
+def generate_accounts_overview_json(request): 
     acc_set = Account.objects.filter(user_full_id=request.user.id)
 
     positive_bal, negative_bal = 0, 0
