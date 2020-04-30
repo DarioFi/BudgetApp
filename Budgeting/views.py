@@ -339,7 +339,7 @@ def account_detail(request, id=-1):
                 continue
             index += 1
     else:
-        balance_time_pairs = [obj.starting_balance, str(obj.created_on.date())]
+        balance_time_pairs = [[obj.starting_balance, str(obj.created_on.date())]]
     data = {
         'account': obj,
         'balance_date': balance_time_pairs,
