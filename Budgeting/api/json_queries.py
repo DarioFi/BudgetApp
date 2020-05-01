@@ -314,7 +314,7 @@ def json_generate_insight_data(request):
         else:
             j['share_revenue'] = 0
         if expenditure != 0:
-            j['share_expenditure'] = j['expenditure'] / expenditure
+            j['share_expenditure'] = -j['expenditure'] / expenditure
         else:
             j['share_expenditure'] = 0
 
@@ -324,11 +324,12 @@ def json_generate_insight_data(request):
         else:
             j['share_revenue'] = 0
         if expenditure != 0:
-            j['share_expenditure'] = j['expenditure'] / expenditure
+            j['share_expenditure'] = -j['expenditure'] / expenditure
         else:
             j['share_expenditure'] = 0
 
     return JsonResponse({
+        'state': "success",
         'transactions': trans_data,
         'accounts': acc_data,
         'categories': cat_data,

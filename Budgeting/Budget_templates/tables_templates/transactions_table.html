@@ -114,10 +114,10 @@
                     riga.appendChild(kek);
 
 
-                    if (item.balance > 0) {
+                    if (item.balance < 0) {
                         kek = document.createElement("td");
                         kek.innerText = "€ ";
-                        kek.innerText += item.balance;
+                        kek.innerText += -item.balance;
                         riga.appendChild(kek);
                         kek = document.createElement("td");
                         riga.appendChild(kek);
@@ -126,7 +126,7 @@
                         riga.appendChild(kek);
                         kek = document.createElement("td");
                         kek.innerText = "€ ";
-                        kek.innerText += -item.balance;
+                        kek.innerText += item.balance;
                         riga.appendChild(kek);
                     }
                     {% if not_delete %}

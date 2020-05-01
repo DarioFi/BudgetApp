@@ -9,6 +9,7 @@ from django.utils import timezone
 default_user = User.objects.first()
 
 
+# todo: add colors
 class Account(models.Model):
     name = models.TextField(max_length=30, null=False)
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
@@ -28,7 +29,7 @@ class Account(models.Model):
         string = "Account:  {} || Balance {}".format(self.name, self.balance)
         return string
 
-
+# todo: add colors
 class CategoryExpInc(models.Model):
     name = models.TextField(max_length=30, null=False)
     exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)

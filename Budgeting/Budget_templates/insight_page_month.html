@@ -1,29 +1,249 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{#    TODO: finire l'insight per giorno mese anno ecc.#}
-        <div class="row no-gutters">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+    {#    TODO: finire l'insight per giorno mese anno ecc.#}
+    <div class="row no-gutters">
 
-            <div class="col-md-8">
-                <div class="card">
-                <div id="Accounts div">
-                    <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Accounts</h2>
-                    {% include 'tables_templates/accounts_tables.html' %}
+        <div class="col-md-8">
+            <div class="card">
+                <div id="Accounts div" class="row row-no-gutters">
+
+                    <div class="col-md-6">
+                        <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Accounts</h2>
+                        <table class="table table-bordered m-0" id="dtBasicExample" role="grid"
+                               aria-describedby="DataTables_Table_0_info">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col"># of transactions</th>
+                                <th scope="col">revenue</th>
+                                <th scope="col">revenue share</th>
+                                <th scope="col">expenditure</th>
+                                <th scope="col">expenditure share</th>
+                            </tr>
+                            </thead>
+                            <tbody id="account_insight_table">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-5">
+                        <canvas id="account revenue chart"></canvas>
+                        <canvas id="account expenditure chart"></canvas>
+                    </div>
                 </div>
                 <div id="Categories div">
                     <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Categories</h2>
                     {% include 'tables_templates/categories_table.html' %}
                 </div>
-                </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    {% with not_search=1 not_delete=1 %}
-                        <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Transactions</h2>
-                        {% include 'tables_templates/transactions_table.html' %}
-                    {% endwith %}
-                </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                {% with not_search=1 not_delete=1 %}
+                    <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Transactions</h2>
+                    {% include 'tables_templates/transactions_table.html' %}
+                {% endwith %}
             </div>
+        </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            $.ajax({
+                url: "{% url 'json insight' %}",
+                type: "GET",
+                data: {
+                    {#'date_init': "",#}
+                    {#'date_end': pairs_balance,#}
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state !== "success") {
+                        alert(data.state);
+                        return;
+                    }
+                    var labels_revenue = [];
+                    var data_revenue = [];
+                    var labels_expenditure = [];
+                    var data_expenditure = [];
+                    table = document.getElementById("account_insight_table");
+                    for (let a = 0; a < data.categories.length; a++) {
+
+                        if (data.categories[a].revenue !== 0) {
+                            labels_revenue.push(data.categories[a].name);
+                            data_revenue.push(data.categories[a].revenue);
+                        }
+                        if (data.categories[a].expenditure !== 0) {
+                            labels_expenditure.push(data.categories[a].name);
+                            data_expenditure.push(data.categories[a].expenditure);
+                        }
+
+                        let riga = document.createElement("tr");
+
+                        var kek = document.createElement("td")
+                        kek.innerText = data.categories[a].name;
+                        riga.appendChild(kek);
+
+                        kek = document.createElement("td")
+                        kek.innerText = data.categories[a].n_transactions;
+                        riga.appendChild(kek);
+
+                        kek = document.createElement("td")
+                        kek.innerText = data.categories[a].revenue;
+                        riga.appendChild(kek);
+
+                        kek = document.createElement("td")
+                        kek.innerText = Math.round((data.categories[a].share_revenue) * 100) + "%";
+                        riga.appendChild(kek);
+
+                        kek = document.createElement("td")
+                        kek.innerText = data.categories[a].expenditure;
+                        riga.appendChild(kek);
+
+                        kek = document.createElement("td")
+                        kek.innerText = Math.round((data.categories[a].share_expenditure) * 100) + "%";
+                        riga.appendChild(kek);
+
+                        table.appendChild(riga);
+                    }
+                    let revenue_chart = document.getElementById('account revenue chart').getContext('2d');
+                    let expenditure_chart = document.getElementById('account expenditure chart').getContext('2d');
+
+                    // Global Options
+                    Chart.defaults.global.defaultFontFamily = 'Lato';
+                    Chart.defaults.global.defaultFontSize = 18;
+                    Chart.defaults.global.defaultFontColor = '#777';
+
+
+                    let account_chart_revenue = new Chart(revenue_chart, {
+                        type: 'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+                        data: {
+                            labels: labels_revenue,
+                            datasets: [{
+                                {#label: 'Population',#}
+                                data: data_revenue,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)',
+                                    'rgba(255, 99, 132, 0.6)'
+                                ],
+                                borderWidth: 1,
+                                borderColor: '#777',
+                                hoverBorderWidth: 6,
+                                hoverBorderColor:
+                                    ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
+                                {#['#000000']#}
+                            }]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: 'Revenue',
+                                fontSize: 24
+                            }
+                            ,
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    fontColor: '#000'
+                                },
+                                fontSize: 12,
+                            }
+                            ,
+                            layout: {
+                                padding: {
+                                    left: 50,
+                                    right:
+                                        0,
+                                    bottom:
+                                        0,
+                                    top:
+                                        0
+                                }
+                            }
+                            ,
+                            tooltips: {
+                                enabled: true,
+                                displayColors:
+                                    true
+                            }
+                        }
+                    });
+
+                    let account_chart_expenditure = new Chart(expenditure_chart, {
+                        type: 'pie', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+                        data: {
+                            labels: labels_expenditure,
+                            datasets: [{
+                                {#label: 'Population',#}
+                                data: data_expenditure,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.6)',
+                                    'rgba(54, 162, 235, 0.6)',
+                                    'rgba(255, 206, 86, 0.6)',
+                                    'rgba(75, 192, 192, 0.6)',
+                                    'rgba(153, 102, 255, 0.6)',
+                                    'rgba(255, 159, 64, 0.6)',
+                                    'rgba(255, 99, 132, 0.6)'
+                                ],
+                                borderWidth: 1,
+                                borderColor: '#777',
+                                hoverBorderWidth: 6,
+                                hoverBorderColor:
+                                    ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
+                            }]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: 'Expenditures',
+                                fontSize: 24
+                            }
+                            ,
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    fontColor: '#000'
+                                },
+                                fontSize: 12,
+                            }
+                            ,
+                            layout: {
+                                padding: {
+                                    left: 50,
+                                    right:
+                                        0,
+                                    bottom:
+                                        0,
+                                    top:
+                                        0
+                                }
+                            }
+                            ,
+                            tooltips: {
+                                enabled: true,
+                                displayColors:
+                                    true
+                            }
+                        }
+                    });
+                }
+            })
+
+
+        })
+    </script>
 {% endblock %}
