@@ -31,9 +31,9 @@
 
         <div class="it-datepicker-wrapper">
             <div class="form-group">
-                <input class="form-control it-date-datepicker" id="date_time" type="date"
+                <input class="form-control it-date-datepicker " id="date_time" type="date"
                        placeholder="inserisci la data in formato gg/mm/aaaa">
-                <label for="date1">Date label</label>
+                <label for="date1">Date</label>
             </div>
         </div>
 
@@ -55,6 +55,9 @@
 
 
 <script>
+    $(document).ready(function () {
+        document.getElementById("date_time").valueAsDate = new Date();
+    })
 
     {#TODO: cercare live search, scrivere la roba per le api#}
 
@@ -64,7 +67,7 @@
         var account = $("#Account_select").val();
         var categoria = $("#Categoria_select").val();
         var date = $("#date_time").val();
-        var amount = -$("#amount").val();
+        var amount = $("#amount").val();
 
 
         $.ajax({
@@ -104,7 +107,7 @@
         var account = $("#Account_select").val();
         var categoria = $("#Categoria_select").val();
         var date = $("#date_time").val();
-        var amount = $("#amount").val();
+        var amount = -$("#amount").val();
 
 
         $.ajax({

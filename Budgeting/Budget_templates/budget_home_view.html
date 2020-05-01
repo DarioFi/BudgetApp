@@ -22,10 +22,16 @@
         <div class="col-md-7">
             <div class="card m-1">
                 <a href="{% url 'transactions' %}">transactions</a>
-{#                 TODO: broken navbar solve it pls #}
+                {#                 TODO: broken navbar solve it pls #}
                 <a href="{% url 'admin:index' %}">Admin</a>
                 <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">
-                    <strong>This month overview</strong></h2>
+                    <strong id="month name placeholder title">This month overview</strong></h2>
+                <script>
+                    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"
+                    ];
+                    document.getElementById("month name placeholder title").innerText = monthNames[new Date().getMonth()] + " overview";
+                </script>
                 {% include 'monthly_overview.html' %}
             </div>
             <div class="card m-1">

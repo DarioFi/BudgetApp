@@ -54,7 +54,7 @@ def generate_data_categories_from_dates(date_init, date_finish, user):
     negative_bal = 0
 
     for cat in category_set:
-        temp_bal = sum([j.balance for j in Transaction.objects.filter(category_id=cat.id,
+        temp_bal = sum([-j.balance for j in Transaction.objects.filter(category_id=cat.id,
                                                                       timeDate__range=[date_init,
                                                                                        date_finish],
                                                                       user_full_id=user.id)])
@@ -63,7 +63,7 @@ def generate_data_categories_from_dates(date_init, date_finish, user):
         else:
             negative_bal += temp_bal
     for cat in category_set:
-        temp_bal = sum([j.balance for j in Transaction.objects.all().filter(category_id=cat.id,
+        temp_bal = sum([-j.balance for j in Transaction.objects.all().filter(category_id=cat.id,
                                                                             timeDate__range=[date_init,
                                                                                              date_finish],
                                                                             user_full_id=user.id)])
@@ -328,7 +328,7 @@ def account_detail(request, id=-1):
         balance_time_pairs = [[float(obj.starting_balance), str(min(date_first_trans, obj.created_on.date()))]]
         c = obj.starting_balance
         for j in transactions:
-            c -= j.balance
+            c += j.balance
             balance_time_pairs.append([float(c), str(j.timeDate)])
 
         index = 0

@@ -90,8 +90,8 @@ class Transaction(models.Model):
 def del_handler_transaction(sender, **kwargs):
     for key, istanza in kwargs.items():
         if key == 'instance':
-            istanza.account.balance += istanza.balance
-            istanza.category.exchange += istanza.balance
+            istanza.account.balance -= istanza.balance
+            istanza.category.exchange -= istanza.balance
             istanza.account.save()
             istanza.category.save()
             break
@@ -107,12 +107,12 @@ def del_handler_account(sender, **kwargs):
                                            name="[DELETED ACCOUNT BALANCE COLLECTOR]")
             if len(query) == 1:
                 # query.update(balance=models.F('balance') + istanza.balance)
-                query[0].balance += istanza.balance
+                query[0].balance -= istanza.balance
                 query[0].save()
             elif len(query) > 1:
                 print("Server error")
             else:
-                deleted_account_collector = Account(name="[DELETED ACCOUNT BALANCE COLLECTOR]", balance=istanza.balance,
+                deleted_account_collector = Account(name="[DELETED ACCOUNT BALANCE COLLECTOR]", balance=istanza.balance,  # todo: controllare se il balance si trova
                                                     starting_balance=istanza.balance, user_full=istanza.user_full)
                 deleted_account_collector.save()
             break

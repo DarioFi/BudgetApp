@@ -76,7 +76,7 @@ def generate_categories_overview_json(request):  # todo: adjust data
         if date_init:
             alfa = alfa.filter(timeDate__gt=date_init)
 
-        somma = sum([j.balance for j in alfa])
+        somma = sum([-j.balance for j in alfa])
         if somma > 0:
             positive_bal += somma
         else:
@@ -88,7 +88,7 @@ def generate_categories_overview_json(request):  # todo: adjust data
 
 
 @login_required
-def generate_accounts_overview_json(request): 
+def generate_accounts_overview_json(request):
     acc_set = Account.objects.filter(user_full_id=request.user.id)
 
     positive_bal, negative_bal = 0, 0
@@ -111,7 +111,7 @@ def generate_accounts_overview_json(request):
         if date_init:
             alfa = alfa.filter(timeDate__gt=date_init)
 
-        somma = sum([j.balance for j in alfa])
+        somma = sum([-j.balance for j in alfa])
         if somma > 0:
             positive_bal += somma
         else:
@@ -181,8 +181,8 @@ def create_transaction_ajax_post_api(request):
 
     new_transaction.save(force_insert=True)
 
-    updater_account.balance -= Decimal(amount)
-    updater_category.exchange -= Decimal(amount)
+    updater_account.balance += Decimal(amount)
+    updater_category.exchange += Decimal(amount)
 
     updater_account.save()
     updater_category.save()
@@ -241,8 +241,98 @@ def json_generate_insight_data(request):
 
     date_init = request.GET.get('date_init')
     date_end = request.GET.get('date_end')
+    print(date_init)
+    print(date_end)
     # todo: finirla
-    raise NotImplementedError
+    #
+    # Transactions in that period
+    # Categories spending with the share
+    # Accounts difference from beginning
+    # Pie chart for the aboves
+    data = {}
+
+    transactions = Transaction.objects.filter(user_full=request.user)
+    if date_init != None and date_end != None:
+        transactions.filter(timeDate__lt=date_end, timeDate__gt=date_init)
+    categories = CategoryExpInc.objects.filter(user_full=request.user)
+    accounts = Account.objects.filter(user_full=request.user)
+
+    cat_data = [{
+        'id': a.id,
+        'name': a.name,
+        'n_transactions': 0,
+        'revenue': 0,
+        'expenditure': 0
+    } for a in categories]
+    acc_data = [{
+        'id': a.id,
+        'name': a.name,
+        'n_transactions': 0,
+        'revenue': 0,
+        'expenditure': 0
+    } for a in accounts]
+
+    revenue = 0
+    expenditure = 0
+
+    trans_data = [{
+        'account_name': h.account.name,
+        'account_id': h.account.id,
+        'timedate': h.timeDate,
+        'category_name': h.category.name,
+        'description': h.description,
+        'balance': h.balance,
+        'id': h.id
+    }
+
+        for h in transactions]
+
+    for t in transactions:
+        if t.balance > 0:
+            revenue += t.balance
+        else:
+            expenditure += t.balance
+        for check in range(len(cat_data)):
+            if cat_data[check]['id'] == t.category.id:
+                cat_data[check]['n_transactions'] += 1
+                if t.balance > 0:
+                    cat_data[check]['revenue'] += t.balance
+                else:
+                    cat_data[check]['expenditure'] += -t.balance
+
+        for check in range(len(acc_data)):
+            if acc_data[check]['id'] == t.category.id:
+                acc_data[check]['n_transactions'] += 1
+                if t.balance > 0:
+                    acc_data[check]['revenue'] += t.balance
+                else:
+                    acc_data[check]['expenditure'] += -t.balance
+
+    for j in acc_data:
+        if revenue != 0:
+            j['share_revenue'] = j['revenue'] / revenue
+        else:
+            j['share_revenue'] = 0
+        if expenditure != 0:
+            j['share_expenditure'] = j['expenditure'] / expenditure
+        else:
+            j['share_expenditure'] = 0
+
+    for j in cat_data:
+        if revenue != 0:
+            j['share_revenue'] = j['revenue'] / revenue
+        else:
+            j['share_revenue'] = 0
+        if expenditure != 0:
+            j['share_expenditure'] = j['expenditure'] / expenditure
+        else:
+            j['share_expenditure'] = 0
+
+    return JsonResponse({
+        'transactions': trans_data,
+        'accounts': acc_data,
+        'categories': cat_data,
+    })
 
 
 def json_account_detailS(request):
