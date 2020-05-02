@@ -341,3 +341,4 @@ def json_account_detailS(request):
         return JsonResponse({'state': "bad request"})
 
     # todo: finirla
+
