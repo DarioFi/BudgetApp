@@ -349,7 +349,7 @@ def json_year_resume(request):
     year: int = request.GET.get('year')
     if year == None:
         return JsonResponse({'state': "Bad request"})
-    transactions = Transaction.objects.filter(timeDate__year=year)
+    transactions = Transaction.objects.filter(timeDate__year=year, user_full=request.user)
     revenues = [0] * 12
     expenditures = [0] * 12
     for t in transactions:
