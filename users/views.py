@@ -108,7 +108,7 @@ def ajax_register(request):
         response['user'] = username
         token = Token.objects.get(user=user).key
         response['token'] = token
-        return Response(response)
+        return JsonResponse(response)
 
     else:
         print('Server error')
