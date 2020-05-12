@@ -16,7 +16,7 @@ urlpatterns = [
     path('api/', include('Budgeting.api.urls')),
     path('export_data', export_user_data_all, name="export data"),
     path('insight_month', insghit_page_month, name="insight page month"),
-
+    path('insight_year/<int:year>/', insight_yearly_balance, name="insight year"),
 
     path('load_data_only_debug', subsituite_database)
 ]

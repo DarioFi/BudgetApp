@@ -336,9 +336,45 @@ def json_generate_insight_data(request):
     })
 
 
+@login_required
 def json_account_detailS(request):
     if request.method != "GET":
         return JsonResponse({'state': "bad request"})
 
     # todo: finirla
 
+
+@login_required
+def json_year_resume(request):
+    year: int = request.GET.get('year')
+    if year == None:
+        return JsonResponse({'state': "Bad request"})
+    transactions = Transaction.objects.filter(timeDate__year=year)
+    revenues = [0] * 12
+    expenditures = [0] * 12
+    for t in transactions:
+        t: Transaction
+        if t.balance > 0:
+            revenues[t.timeDate.month - 1] += t.balance
+        else:
+            expenditures[t.timeDate.month - 1] += t.balance
+    revenues_share = [0] * 12
+    expenditures_share = [0] * 12
+    rev_sum = sum(revenues) / 100
+    exp_sum = sum(expenditures) / 100
+
+    if rev_sum != 0:
+        for h in range(12):
+            revenues_share[h] = int(revenues[h] / rev_sum)
+    if exp_sum != 0:
+        for h in range(12):
+            expenditures_share[h] = int(expenditures[h] / exp_sum)
+
+    return JsonResponse({
+        'state': "success",
+        'revenues': revenues,
+        'revenues_share': revenues_share,
+        'expenditures': expenditures,
+        'expenditures_share': expenditures_share,
+        'year': year
+    })

@@ -308,8 +308,14 @@ def export_user_data_all(request):
 
 @login_required
 def insghit_page_month(request):
-    return render(request, 'insight_page_month.html', {})
+    return render(request, 'insight_pages/insight_page_range.html', {})
 
+@login_required
+def insight_yearly_balance(request, year=2020):
+    data = {
+        'year': year
+    }
+    return render(request, 'insight_pages/insight_year.html', data)
 
 @login_required
 def account_detail(request, id=-1):

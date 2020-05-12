@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <script>
+        var selected_year = {{ year }};
+    </script>
+
+    <button id="previous year button">Previous year</button>
+    <h4 id="year_title"> You're looking at year {{ year }}</h4>
+    <button id="next year button">Next year</button>
+    <h2 class="font-weight-normal py-3 px-3 px-sm-3 m-0">Data</h2>
+    <table class="table table-bordered m-0" id="dtBasicExample" role="grid"
+           aria-describedby="DataTables_Table_0_info">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Month</th>
+            <th scope="col">Revenue</th>
+            <th scope="col">Revenue share</th>
+            <th scope="col">Expenditure</th>
+            <th scope="col">Expenditure share</th>
+        </tr>
+        </thead>
+        <tbody id="year_resume">
+
+        </tbody>
+    </table>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+        document.getElementById("previous year button").onclick = function (event) {
+            selected_year--;
+            update_data();
+        };
+        document.getElementById("next year button").onclick = function (event) {
+            selected_year++;
+            update_data();
+        };
+
+
+        update_data = function () {
+            {#alert(selected_year);#}
+            let re = new RegExp("[0-9][0-9][0-9][0-9]");
+            document.getElementById("year_title").innerText = document.getElementById("year_title").innerText.replace(re, selected_year);
+
+            $.ajax({
+                url: "{% url 'json insight year' %}",
+                type: "GET",
+                data: {
+                    'year': selected_year
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state === "success") {
+                        console.log(data);
+                        var month_list = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+                        table = document.getElementById("year_resume");
+                        table.innerHTML = "";
+                        for (let j = 0; j < 12; j++) {
+
+                            let riga = document.createElement("tr");
+
+                            var kek = document.createElement("td")
+                            kek.innerText = month_list[j];
+                            riga.appendChild(kek);
+
+                            var kek = document.createElement("td")
+                            kek.innerText = data.revenues[j] + "€";
+                            riga.appendChild(kek);
+
+                            var kek = document.createElement("td")
+                            kek.innerText = data.revenues_share[j] + "%";
+                            riga.appendChild(kek);
+
+                            var kek = document.createElement("td")
+                            kek.innerText = data.expenditures[j] + "€";
+                            riga.appendChild(kek);
+
+                            var kek = document.createElement("td")
+                            kek.innerText = data.expenditures_share[j] + "%";
+                            riga.appendChild(kek);
+
+                            table.appendChild(riga);
+                        }
+                    } else {
+                        alert(data.state);
+                    }
+                }
+            })
+        }
+
+        $(document).ready(update_data);
+
+    </script>
+{% endblock %}
