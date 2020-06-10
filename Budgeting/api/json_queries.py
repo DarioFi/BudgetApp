@@ -7,6 +7,9 @@ from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 
 
+
+# todo: bug nella tabella account, il past x days mostra il segno sbagliato
+
 # todo: migliorare i formati delle api
 
 @login_required
