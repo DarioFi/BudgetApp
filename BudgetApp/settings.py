@@ -48,10 +48,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #     third parts
-    # 'crispy_forms',
+    'django.contrib.sites',
+    # third parties
     'rest_framework.authtoken',
     'rest_framework',
+    # 'social_app',
+    'allauth',
+    'allauth.account',  # <--
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     #     owns
     'pages',
     'Budgeting',
@@ -69,7 +74,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
-
 
 AUTH_USERS_MODEL = 'django.contrib.auth.models.User'
 
@@ -117,6 +121,23 @@ WSGI_APPLICATION = 'BudgetApp.wsgi.application'
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -148,6 +169,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+SITE_ID = 1
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
