@@ -9,6 +9,12 @@ from django.utils import timezone
 default_user = User.objects.first()
 
 
+# todo: add limit to transactions query to improve overall performance
+
+# todo: add test unit
+
+# todo: change version system
+
 # todo: add colors
 class Account(models.Model):
     name = models.TextField(max_length=30, null=False)
@@ -28,6 +34,7 @@ class Account(models.Model):
     def __str__(self):
         string = "Account:  {} || Balance {}".format(self.name, self.balance)
         return string
+
 
 
 # todo: add colors
@@ -86,6 +93,7 @@ class Transaction(models.Model):
                                                                                                 self.balance,
                                                                                                 self.description)
         return string
+
 
 
 @receiver(pre_delete, sender=Transaction)

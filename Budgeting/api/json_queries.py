@@ -7,9 +7,6 @@ from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 
 
-
-# todo: bug nella tabella account, il past x days mostra il segno sbagliato
-
 # todo: migliorare i formati delle api
 
 @login_required
@@ -102,7 +99,7 @@ def generate_accounts_overview_json(request):
     date_end = request.GET.get('date_end_categ')
 
     if not (date_init and date_end):
-        date_end = date.today()
+        date_end = date.today() + timedelta(1)
         days = timedelta(30)
         date_init = date_end - days
 
@@ -114,8 +111,8 @@ def generate_accounts_overview_json(request):
         if date_init:
             alfa = alfa.filter(timeDate__gt=date_init)
 
-        somma = sum([-j.balance for j in alfa])
-        if somma > 0:
+        somma = sum([j.balance for j in alfa])
+        if somma < 0:
             positive_bal += somma
         else:
             negative_bal += somma
