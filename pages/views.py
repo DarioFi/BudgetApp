@@ -9,6 +9,7 @@ def home_view(request, *args, **kwargs):
         return home_budget(request)
     else:
         return login_request(request)
+        pass
 
 
 def changelog(request):

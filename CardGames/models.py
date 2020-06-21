@@ -1,9 +1,10 @@
 from typing import List
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.datetime_safe import datetime
 
-from users.models import User
+User = get_user_model()
 from random import shuffle
 
 card_list = [b + str(a) for b in ["a", "b", "c", "d"] for a in range(10)]

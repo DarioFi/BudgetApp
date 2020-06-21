@@ -17,7 +17,7 @@ def home_budget(request):
     total_account_balance = sum([j.balance for j in account_list])
 
     temp_query = Transaction.objects.filter(user_full_id=request.user.id).order_by(
-        'timeDate')  # todo: controllare se funziona
+        'timeDate')
 
     transaction_list = []
     for h in range(len(temp_query) - 1, max(-1, len(temp_query) - 8), -1):
@@ -74,18 +74,6 @@ def generate_data_categories_from_dates(date_init, date_finish, user):
     return pairs
 
 
-def generate_data_accounts_from_dates(date_init, date_finish):  # TODO: aggiustarla
-    account_set = Account.objects.all()
-
-    pairs = []
-
-    for cat in account_set:
-        pairs.append((cat.name, sum([j.balance for j in Transaction.objects.all().filter(account_id=cat.id,
-                                                                                         timeDate__range=[date_init,
-                                                                                                          date_finish])])))
-
-    return pairs
-
 
 @login_required
 def transactions_overview(request):
@@ -123,9 +111,8 @@ def test_page(request):
     return render(request, 'test.html', {})
 
 
-# TODO: aggiungere il changelog
 # TODO: transazioni ricorrenti
-# TODO: export data
+# todo: settings page
 
 @login_required
 def categories_summary(request):

@@ -15,5 +15,4 @@ urlpatterns = [
     path('rest_api/token_auth_login', obtain_auth_token, name="login_auth_token"),
     path('rest_api/auth_check', is_authenticated),
     path('login/', login_request, name="login"),
-    path('', TemplateView.as_view(template_name="social_index.html")),
 ]

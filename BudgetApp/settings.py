@@ -54,14 +54,14 @@ INSTALLED_APPS = [
     'rest_framework',
     # 'social_app',
     'allauth',
-    'allauth.account',  # <--
+    'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     #     owns
     'pages',
     'Budgeting',
-    'users.apps.UsersConfig',
-    'CardGames'
+    'CardGames',
+    'users',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -75,7 +75,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTH_USERS_MODEL = 'django.contrib.auth.models.User'
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -187,4 +187,4 @@ DATABASES = {
     }
 }
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())

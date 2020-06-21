@@ -1,15 +1,16 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
 from Budgeting.views import home_budget
-# from django.contrib.auth.models import AbstractUser
-from users.models import User
+from django.contrib.auth.models import AbstractUser
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 
+
+User = get_user_model()
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')

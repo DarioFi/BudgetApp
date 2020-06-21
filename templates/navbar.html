@@ -26,7 +26,9 @@
                     <a class="nav-link" href="{% url 'accounts' %}">Accounts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'export data' %}">Export data</a>
+                    <a class="nav-link" onclick="if (confirm('Do you want to download all the data about your budget?')){
+                        location.href = '{% url "export data" %}'
+                    }">Export data</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"

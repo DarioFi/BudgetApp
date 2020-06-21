@@ -1,10 +1,10 @@
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+User = get_user_model()
 
 default_user = User.objects.first()
 
@@ -12,8 +12,6 @@ default_user = User.objects.first()
 # todo: add limit to transactions query to improve overall performance
 
 # todo: add test unit
-
-# todo: change version system
 
 # todo: add colors
 class Account(models.Model):
@@ -107,7 +105,7 @@ def del_handler_transaction(sender, **kwargs):
             break
 
 
-@receiver(pre_delete, sender=Account)
+@receiver(pre_delete, sender=Account) #todo: sostituire con un sistema sicuro di trasferimento fra account
 def del_handler_account(sender, **kwargs):
     for key, istanza in kwargs.items():
         if key == 'instance':
@@ -127,13 +125,3 @@ def del_handler_account(sender, **kwargs):
                                                     starting_balance=istanza.balance, user_full=istanza.user_full)
                 deleted_account_collector.save()
             break
-
-# TODO:
-#
-#   Handle account deletion
-#   Gestione account
-#   Gestione categorie
-#   Users
-#   Home Page
-#
-#
