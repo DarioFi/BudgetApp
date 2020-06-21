@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.contrib.auth import authenticate, login, get_user_model
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -9,8 +11,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 
-
 User = get_user_model()
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -121,3 +123,60 @@ def is_authenticated(request):
     if request.user.is_authenticated:
         return JsonResponse({'detail': "user authenticated"})
     return JsonResponse({'detail': "valid token, unauthenticated"})
+
+
+google_client_id = "546317649909-arqlqr3sft8mgk3sc6pde0pact1vnkr0.apps.googleusercontent.com"
+google_client_secret = "svJWoBRVzFUaBKjm0fFjTwD8"
+
+
+def sendmail(request=1):
+    import pickle
+    import os.path
+    from googleapiclient.discovery import build
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.auth.transport.requests import Request
+
+    # If modifying these scopes, delete the file token.pickle.
+
+    SCOPES = ['https: // mail.google.com /',
+              'https: // www.googleapis.com / auth / gmail.modify',
+              'https: // www.googleapis.com / auth / gmail.compose',
+              'https: // www.googleapis.com / auth / gmail.send']
+
+    def main():
+        """Shows basic usage of the Gmail API.
+        Lists the user's Gmail labels.
+        """
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'users/credentials.json', SCOPES)
+                creds = flow.run_local_server(port=8000)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
+
+        service = build('gmail', 'v1', credentials=creds)
+
+        # Call the Gmail API
+        results = service.users().labels().list(userId='me').execute()
+        labels = results.get('labels', [])
+
+        if not labels:
+            print('No labels found.')
+        else:
+            print('Labels:')
+            for label in labels:
+                print(label['name'])
+
+    main()

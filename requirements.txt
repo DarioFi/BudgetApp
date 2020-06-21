@@ -7,3 +7,6 @@ sqlparse>=0.3.1
 whitenoise==5.1.0
 djangorestframework==3.11.0
 django-allauth==0.42.0
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

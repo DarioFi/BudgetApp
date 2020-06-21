@@ -58,3 +58,12 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
+
+# C:\Users\Dario>heroku config:get TRUSTIFI_SECRET -a=filabudget
+# e15cea8651c455a6fb1f38c9c2879c78
+#
+# C:\Users\Dario>heroku config:get TRUSTIFI_URL -a=filabudget
+# https://be.trustifi.com
+#
+# C:\Users\Dario>heroku config:get TRUSTIFI_KEY -a=filabudget
+# fca0f2650a486c9500ee6dbe0c4d4310c664f79390c1e54f
