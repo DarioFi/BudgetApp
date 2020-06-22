@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-    # last_login_action = models.DateTimeField(_('last login action'), default=timezone.now)
+    last_login_action = models.DateTimeField(_('last login action'), default=timezone.now)
 
     objects = UserManager()
 
@@ -61,8 +61,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         It's an override because i need to add a last_action field
         @return: True
         """
-        # self.last_login_action = timezone.now()
-        # self.save()
+        self.last_login_action = timezone.now()
+        self.save()
 
         return True
 
