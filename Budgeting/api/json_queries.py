@@ -28,6 +28,10 @@ def generate_json_transaction_get(request):
     if description_filter:
         transactions = transactions.filter(description__contains=description_filter)
 
+    transactions = transactions.filter()[:100]  # todo: aggiungere il limite
+
+    print(transactions.query)
+
     list = [
         # h.account.name, h.timeDate, h.category.name, h.description, h.balance, h.id
         {

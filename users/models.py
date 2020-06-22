@@ -2,13 +2,15 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 # Create your models here.
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser, PermissionsMixin, UserManager, UnicodeUsernameValidator
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser, PermissionsMixin, UserManager, \
+    UnicodeUsernameValidator
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from django.utils.translation import gettext_lazy as _
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
@@ -42,14 +44,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
+    # last_login_action = models.DateTimeField(_('last login action'), default=timezone.now)
+
     objects = UserManager()
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+
     # test_field = models.BooleanField(null=False, default=False)
 
+    @property
+    def is_authenticated(self):
+        """
+        Always return True because of instantiation system
+        It's an override because i need to add a last_action field
+        @return: True
+        """
+        # self.last_login_action = timezone.now()
+        # self.save()
 
+        return True
 
 
 @receiver(post_save, sender=get_user_model())
@@ -57,7 +72,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
-
+# todo: last login or action
 
 # C:\Users\Dario>heroku config:get TRUSTIFI_SECRET -a=filabudget
 # e15cea8651c455a6fb1f38c9c2879c78

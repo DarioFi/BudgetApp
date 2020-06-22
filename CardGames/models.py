@@ -9,8 +9,7 @@ from random import shuffle
 
 card_list = [b + str(a) for b in ["a", "b", "c", "d"] for a in range(10)]
 
-
-# Create your models here.
+# todo: riscriverlo con i websocket
 
 class match_invite(models.Model):
     joining_id = models.TextField(max_length=20)

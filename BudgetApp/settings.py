@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'Budgeting',
     'CardGames',
     'users',
+    'Moody'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -180,11 +181,24 @@ LOGIN_URL = 'home'
 
 # ie if Heroku server
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'FilaBudgetDB',
+        'USER': 'fila',
+        'PASSWORD': 'fila',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
+
 }
 
 django_heroku.settings(locals())

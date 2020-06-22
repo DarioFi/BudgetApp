@@ -41,12 +41,8 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'game_home' %}">Card Games</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'changelog' %}">Changelog</a>
-                </li>
 
+                </li>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
@@ -55,8 +51,18 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="#">Settings</a>
+                        <a class="dropdown-item" href="{% url 'changelog' %}">Changelog</a>
                         <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
                         <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </li>
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Other app
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'game_home' %}">Card Games</a>
                     </div>
                 </li>
             </ul>
