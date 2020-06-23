@@ -16,22 +16,56 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'budget home' %}">Budget home</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'game_home' %}">Card Games</a>
+                    <a class="nav-link" href="{% url 'transactions' %}">Transactions</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts' %}">Accounts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       onclick="if (confirm('Do you want to download all the data about your budget?')){
+                               location.href = '{% url "export data" %}'
+                               }">Export data</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Insight
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'insight page month' %}">Details</a>
+                        <a class="dropdown-item" href="{% url 'insight year' 2020 %}">Year</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+
+                </li>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Hi {{ user.username }}!
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Settings</a>
                         <a class="dropdown-item" href="{% url 'changelog' %}">Changelog</a>
                         <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
                         <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                     </div>
                 </li>
-
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Other app
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'game_home' %}">Card Games</a>
+                    </div>
+                </li>
             </ul>
             {#        </div>#}
         </div>

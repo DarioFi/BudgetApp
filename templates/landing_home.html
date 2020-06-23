@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block  content %}
+            <div class="row no-gutters">
+
+            <div class="col-md-4">
+
+                <div class="m-4">
+                    <button type="button" onclick="location.href = '{% url "budget home" %}'" class="btn btn-light">
+                        <div class="card">
+                            {#                        <img class="card-img-top" src="" alt="Card image cap">#}
+                            <div class="card-body">
+                                <h2 class="card-title text-primary">FilaBudget</h2>
+                                <p class="card-text">
+                                    Use filabudget to track your expenses and let it help manage your money
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                                    irure
+                                    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                                    pariatur.
+                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                                    mollit anim id est laborum."
+                                </p>
+                                <a href='{% url "budget home" %}' class="btn btn-primary">Go to FilaBudget!</a>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+            <div class="col-md-4 ">
+                <div class="m-4">
+                    <button type="button" onclick="location.href = '{% url "moody home" %}'" class="btn btn-light">
+                        <div class="card">
+                            {#                        <img class="card-img-top" src="" alt="Card image cap">#}
+                            <div class="card-body">
+                                <h2 class="card-title text-primary">Moody</h2>
+                                <p class="card-text">
+                                    Track your Mood!
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                                    irure
+                                    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                                    pariatur.
+                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                                </p>
+                                <a href='{% url "moody home" %}' class="btn btn-primary">Go to Moody!</a>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="m-4">
+                    <button type="button" onclick="location.href = '{% url "game_home" %}'" class="btn btn-light">
+                        <div class="card">
+                            {#                        <img class="card-img-top" src="" alt="Card image cap">#}
+                            <div class="card-body">
+                                <h2 class="card-title text-primary">Cardgames</h2>
+                                <p class="card-text">
+                                    Play some card games with your favorite butei!
+                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                                    irure
+                                    dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                                    pariatur.
+                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+
+                                </p>
+                                <a href='{% url "game_home" %}' class="btn btn-primary">Go to cardgames!</a>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+
+{% endblock %}

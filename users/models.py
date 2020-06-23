@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-# Create your models here.
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser, PermissionsMixin, UserManager, \
-    UnicodeUsernameValidator
+
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser, PermissionsMixin, UserManager
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -52,7 +51,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
-    # test_field = models.BooleanField(null=False, default=False)
 
     @property
     def is_authenticated(self):
@@ -61,9 +59,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         It's an override because i need to add a last_action field
         @return: True
         """
-        self.last_login_action = timezone.now()
-        self.save()
-
+        if self.username:
+            self.last_login_action = timezone.now()
+            self.save()
         return True
 
 
@@ -72,13 +70,3 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
-# todo: last login or action
-
-# C:\Users\Dario>heroku config:get TRUSTIFI_SECRET -a=filabudget
-# e15cea8651c455a6fb1f38c9c2879c78
-#
-# C:\Users\Dario>heroku config:get TRUSTIFI_URL -a=filabudget
-# https://be.trustifi.com
-#
-# C:\Users\Dario>heroku config:get TRUSTIFI_KEY -a=filabudget
-# fca0f2650a486c9500ee6dbe0c4d4310c664f79390c1e54f
