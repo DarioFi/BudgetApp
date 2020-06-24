@@ -9,6 +9,12 @@ from django.contrib.auth.decorators import login_required
 
 # todo: migliorare i formati delle api
 
+# todo: modify category and accounts
+
+# todo : add lots of tooltip
+
+# todo: categoria spesa massima
+
 @login_required
 def generate_json_transaction_get(request):
     transactions = Transaction.objects.filter(user_full_id=request.user.id)
@@ -29,8 +35,6 @@ def generate_json_transaction_get(request):
         transactions = transactions.filter(description__contains=description_filter)
 
     transactions = transactions.filter()[:100]  # todo: aggiungere il limite
-
-    print(transactions.query)
 
     list = [
         # h.account.name, h.timeDate, h.category.name, h.description, h.balance, h.id

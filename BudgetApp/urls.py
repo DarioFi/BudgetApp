@@ -13,5 +13,6 @@ urlpatterns = [
     path('games/', include('CardGames.urls')),
     path('changelog', changelog, name="changelog"),
     path('accounts/', include('allauth.urls')),
-    path('moody/', include('Moody.urls'))
+    path('moody/', include('Moody.urls')),
+    path('chat/', include('chat_test.urls'))
 ]

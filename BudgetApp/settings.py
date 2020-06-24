@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # third parties
     'rest_framework.authtoken',
     'rest_framework',
+    'channels',
     # 'social_app',
     'allauth',
     'allauth.account',
@@ -95,7 +96,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, "templates"),
                  os.path.join(BASE_DIR, "users/Users_Templates"),
-                 os.path.join(BASE_DIR, "Budgeting/Budget_templates")],
+                 os.path.join(BASE_DIR, "Budgeting/Budget_templates"),
+                 os.path.join(BASE_DIR, "chat_test")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -176,18 +178,6 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'home'
 
-# import django_heroku
-# django_heroku.settings(locals())
-
-# ie if Heroku server
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
 
     'default': {
@@ -200,5 +190,17 @@ DATABASES = {
     }
 
 }
+
+ASGI_APPLICATION = "BudgetApp.routing.application"
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "asgi_redis.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+#         },
+#         "ROUTING": "chat.routing.channel_routing",
+#     },
+# }
 
 django_heroku.settings(locals())

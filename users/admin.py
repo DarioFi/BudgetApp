@@ -11,7 +11,7 @@ class CustomUserAdmin(UserAdmin):
     model = User
     list_display = ('username', 'email', 'last_login_action')
     list_filter = ('last_login', 'is_superuser', 'is_staff', 'last_login_action')
-    ordering = ('id',)
+    ordering = ('-last_login_action', 'id')
     search_fields = ('username',)
 
 admin.site.register(User, CustomUserAdmin)
