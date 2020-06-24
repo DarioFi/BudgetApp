@@ -10,8 +10,14 @@ django-allauth==0.42.0
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-channels
+# channels
 channels_redis
-daphne==2.5.0
-asgi_redis
-asgiref==3.2.10
+# daphne==2.5.0
+# asgi_redis
+# asgiref==3.2.10
+
+asgi-redis==0.8.3
+asgiref==0.9
+# autobahn==0.12.1
+channels==0.9.3
+daphne==0.9.1
