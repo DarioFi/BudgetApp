@@ -191,8 +191,6 @@ DATABASES = {
 
 }
 
-ASGI_APPLICATION = "BudgetApp.routing.application"
-
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "asgi_redis.RedisChannelLayer",
@@ -204,3 +202,5 @@ ASGI_APPLICATION = "BudgetApp.routing.application"
 # }
 
 django_heroku.settings(locals())
+
+ASGI_APPLICATION = "BudgetApp.routing.application"
