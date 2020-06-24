@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {% block  content %}
             <div class="row no-gutters">
 
             <div class="col-md-4">
 
                 <div class="mt-4">
-                    <button type="button" onclick="location.href = '{% url "budget home" %}'" class="btn btn-light">
+                    <button type="button"
+{#                            onclick="location.href = '{% url "budget home" %}'" #}
+                            class="btn btn-light">
                         <div class="card">
                             {#                        <img class="card-img-top" src="" alt="Card image cap">#}
                             <div class="card-body">
                                 <h2 class="card-title text-primary">FilaBudget</h2>
-                                <p class="card-text">
+                                <i class="material-icons" onclick="toggleElements('filabudget_info')">info</i>
+                                <p class="card-text" id="filabudget_info" style="display:none">
                                     Use filabudget to track your expenses and let it help manage your money
                                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                                     incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
@@ -36,7 +39,7 @@
                             {#                        <img class="card-img-top" src="" alt="Card image cap">#}
                             <div class="card-body">
                                 <h2 class="card-title text-primary">Moody</h2>
-                                <p class="card-text">
+                                <p class="card-text" id="moody_info" style="display:none">
                                     Track your Mood!
                                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                                     incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
@@ -59,7 +62,7 @@
                             {#                        <img class="card-img-top" src="" alt="Card image cap">#}
                             <div class="card-body">
                                 <h2 class="card-title text-primary">Cardgames</h2>
-                                <p class="card-text">
+                                <p class="card-text" id="cardgames_info" style="display:none">
                                     Play some card games with your favorite butei!
                                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                                     incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
@@ -80,4 +83,13 @@
 
         </div>
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function toggleElements(id)
+    {
+        document.getElementById(id).style.display="default";
+    }
+</script>
 {% endblock %}
