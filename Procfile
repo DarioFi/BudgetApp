@@ -1,1 +1,1 @@
-web: gunicorn BudgetApp.wsgi --log-file -
+worker: python manage.py runworker channels --settings=<filabudget>.settings -v2
