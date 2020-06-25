@@ -55,3 +55,36 @@
 </script>
 </body>
 </html>
+
+<script>
+    $(document).ready(function () {
+        function a() {
+            $("#div_alert").removeClass("show")
+        }
+
+        function o(a) {
+            $("#text_error").html(a), $("#div_alert").addClass("show")
+        }
+
+        $("#btn_close_alert").click(function () {
+            a()
+        }), $("#btn_login").click(function () {
+            var e = $("#e_li").val(), n = $("#p_li").val(), t = {email: e, password: n};
+            a(), "" != e && "" != n ? $.ajax({
+                type: "POST",
+                url: "../api/login",
+                data: JSON.stringify(t),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (a) {
+                    window.location.href = "../app/home.php"
+                },
+                error: function (a, e, n) {
+                    var t = a.responseText;
+                    o((t = JSON.parse(t)).error.message)
+                }
+            }) : o("Email e password obbligatori.")
+        })
+    });
+
+</script>

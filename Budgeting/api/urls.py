@@ -13,5 +13,7 @@ urlpatterns = [
     path('ajax/del_transaction', delete_transaction_ajax_post_api, name="del transaction api"),
     path('ajax/create_category', create_new_category, name="ajax_create_category"),
     path('ajax/create_account', create_new_account, name="ajax_create_account"),
+    path('ajax/modify_account_name', modify_account_name, name="ajax_modify_account_name"),
     path('rest/transactions', rest_api_transactions_overview)
 ]
+ # todo: cambiare home page filabudget

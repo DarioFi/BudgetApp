@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render
 
 from Budgeting.models import Account, Transaction, CategoryExpInc
@@ -386,3 +386,24 @@ def json_year_resume(request):
         'expenditures_share': expenditures_share,
         'year': year
     })
+
+
+@login_required
+def modify_account_name(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest
+    account_id = request.POST.get('id_account')
+    acc = Account.objects.get(user_full=request.user, id=account_id)
+    # if not acc.exists():
+    #     return JsonResponse({
+    #         'state': "This account doesn't belong to you"
+    #     })
+    new_name = request.POST.get('name')
+    if new_name.replace(" ", "") == "":
+        return JsonResponse({
+            'state': "Invalid name"
+        })
+    acc.name = new_name
+    acc.save()
+
+    return JsonResponse({'state': "success"})

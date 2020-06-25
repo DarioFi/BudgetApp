@@ -3,8 +3,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 
 
-    {{ state }}
-    {{ account.name }}
+    <form class="form-inline">
+        <h4>Account Name: </h4>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="inputPassword2" class="sr-only">Account Name</label>
+            <input type="text" class="form-control" id="Account_name" placeholder="Account_name">
+        </div>
+        <button class="btn btn-primary mb-2" id="account modify name button">Change name</button>
+    </form>
+
+    <script>
+        $(document).ready(
+            document.getElementById('Account_name').value = "{{ account.name }}"
+        )
+
+        document.getElementById("account modify name button").onclick = function () {
+            $.ajax({
+                url: "{% url 'ajax_modify_account_name' %}",
+                type: "POST",
+                data: {
+                    'id_account': {{ account.id }},
+                    'name': document.getElementById('Account_name').value,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.state !== 'success') {
+                        alert(data.state);
+                    } else {
+                        alert("Name changed succefully!");
+                        location.reload()
+                    }
+                },
+                error: function (data) {
+                    alert(data)
+                }
+            })
+        }
+    </script>
+
     <div class="container">
         <canvas id="myChart"></canvas>
     </div>
