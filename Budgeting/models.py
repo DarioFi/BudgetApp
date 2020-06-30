@@ -11,6 +11,8 @@ default_user = User.objects.first()
 
 # todo: add limit to transactions query to improve overall performance
 
+# todo: add validators
+
 # todo: add test unit
 
 # todo: add colors
