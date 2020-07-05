@@ -17,11 +17,9 @@ def home_budget(request):
     total_account_balance = sum([j.balance for j in account_list])
 
     temp_query = Transaction.objects.filter(user_full_id=request.user.id).order_by(
-        'timeDate')
+        'timeDate')[:8]
 
-    transaction_list = []
-    for h in range(len(temp_query) - 1, max(-1, len(temp_query) - 8), -1):
-        transaction_list.append(temp_query[h])
+    transaction_list = list(temp_query)
 
     categories_list_names = [j.name for j in CategoryExpInc.objects.filter(user_full_id=request.user.id)]
 
