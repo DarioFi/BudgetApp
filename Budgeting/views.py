@@ -17,7 +17,7 @@ def home_budget(request):
     total_account_balance = sum([j.balance for j in account_list])
 
     temp_query = Transaction.objects.filter(user_full_id=request.user.id).order_by(
-        'timeDate')[:8]
+        '-timeDate')[:8]
 
     transaction_list = list(temp_query)
 
