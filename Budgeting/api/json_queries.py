@@ -162,42 +162,20 @@ def create_transaction_ajax_post_api(request):
     if request.method != "POST" or not request.user.is_authenticated:
         return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
 
-    stuff = {
-        'state': "failed"
-    }
-
     description: str = request.POST.get('description')
     account: str = request.POST.get('account')
     category: str = request.POST.get('category')
     date = request.POST.get('date')
     try:
         amount: float = float(request.POST.get('amount'))
-    except:
+    except TypeError:
         return JsonResponse({'state': "Error in the value of amount"})
 
-    updater_account: Account = Account.objects.filter(name=account, user_full=request.user)[0]
-    updater_category: CategoryExpInc = CategoryExpInc.objects.filter(name=category, user_full=request.user)[0]
-
-    new_transaction = Transaction(
-        description=description,
-        timeDate=date,
-        balance=amount,
-        account=updater_account,
-        category=updater_category,
-        user_full_id=request.user.id
-    )
-
-    new_transaction.save(force_insert=True)
-
-    updater_account.balance += Decimal(amount)
-    updater_category.exchange += Decimal(amount)
-
-    updater_account.save()
-    updater_category.save()
-
-    stuff['state'] = "success"
-
-    return JsonResponse(stuff)
+    if Transaction.create(user=request.user, description=description, account_name=account, category_name=category,
+                          date=date, amount=amount):
+        return JsonResponse({'state': "success"})
+    else:
+        return JsonResponse({'error': "invalid transaction"})
 
 
 def is_authenticated(request):

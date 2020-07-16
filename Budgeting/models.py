@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -36,8 +38,9 @@ class Account(models.Model):
         return string
 
 
-
 # todo: add colors
+
+# todo: add uncounted category and decide its behaviour
 class CategoryExpInc(models.Model):
     name = models.TextField(max_length=30, null=False)
     exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
@@ -94,6 +97,29 @@ class Transaction(models.Model):
                                                                                                 self.description)
         return string
 
+    @classmethod
+    def create(cls, *, user, amount, date, description, category_name, account_name):  # todo: good data validation pls
+        updater_account: Account = Account.objects.filter(name=account_name, user_full=user)[0]
+        updater_category: CategoryExpInc = CategoryExpInc.objects.filter(name=category_name, user_full=user)[0]
+
+        new_transaction = Transaction(
+            description=description,
+            timeDate=date,
+            balance=amount,
+            account=updater_account,
+            category=updater_category,
+            user_full_id=user.id
+        )
+
+        new_transaction.save(force_insert=True)
+
+        updater_account.balance += Decimal(amount)
+        updater_category.exchange += Decimal(amount)
+
+        updater_account.save()
+        updater_category.save()
+
+        return True
 
 
 @receiver(pre_delete, sender=Transaction)
@@ -107,7 +133,7 @@ def del_handler_transaction(sender, **kwargs):
             break
 
 
-@receiver(pre_delete, sender=Account) #todo: sostituire con un sistema sicuro di trasferimento fra account
+@receiver(pre_delete, sender=Account)  # todo: sostituire con un sistema sicuro di trasferimento fra account
 def del_handler_account(sender, **kwargs):
     for key, istanza in kwargs.items():
         if key == 'instance':

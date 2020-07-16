@@ -1,6 +1,6 @@
 from django.urls import path
 from .json_queries import *
-from .rest_api import rest_api_transactions_overview
+from .rest_api import *
 
 urlpatterns = [
     path('ajax/json_categories', generate_categories_overview_json, name="json_categories"),
@@ -14,6 +14,9 @@ urlpatterns = [
     path('ajax/create_category', create_new_category, name="ajax_create_category"),
     path('ajax/create_account', create_new_account, name="ajax_create_account"),
     path('ajax/modify_account_name', modify_account_name, name="ajax_modify_account_name"),
-    path('rest/transactions', rest_api_transactions_overview)
+    path('rest/transactions', rest_api_transactions_overview),
+    path('rest/create_transactions', create_transaction),
+    path('rest/account_list', account_list),
+    path('rest/category_list', category_list)
 ]
- # todo: cambiare home page filabudget
+# todo: cambiare home page filabudget
