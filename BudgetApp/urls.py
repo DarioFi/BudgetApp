@@ -11,7 +11,7 @@ urlpatterns = [
     path('users/', include('django.contrib.auth.urls')),
     path('budget/', include('Budgeting.urls')),
     path('games_old/', include('CardGames.urls')),
-    path('games/', include('games.urls')),
+    # path('games/', include('games.urls')),
     path('changelog', changelog, name="changelog"),
     path('accounts/', include('allauth.urls')),
     path('moody/', include('Moody.urls')),
