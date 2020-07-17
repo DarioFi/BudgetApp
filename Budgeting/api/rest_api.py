@@ -55,12 +55,12 @@ def create_transaction(request):
     category: str = request.POST.get('category')
     date = request.POST.get('date')
     try:
-        amount: float = float(request.POST.get('amount'))
-    except TypeError:
+        balance: float = float(request.POST.get('balance'))
+    except:
         return Response({'state': "Error in the value of amount"})
 
     if Transaction.create(user=request.user, description=description, account_name=account, category_name=category,
-                          date=date, amount=amount):
+                          date=date, balance=balance):
         return Response({'state': "success"})
     else:
         return Response({'error': "invalid transaction"})

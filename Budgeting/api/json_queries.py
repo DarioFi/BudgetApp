@@ -167,12 +167,12 @@ def create_transaction_ajax_post_api(request):
     category: str = request.POST.get('category')
     date = request.POST.get('date')
     try:
-        amount: float = float(request.POST.get('amount'))
+        balance: float = float(request.POST.get('amount'))
     except TypeError:
         return JsonResponse({'state': "Error in the value of amount"})
 
     if Transaction.create(user=request.user, description=description, account_name=account, category_name=category,
-                          date=date, amount=amount):
+                          date=date, balance=balance):
         return JsonResponse({'state': "success"})
     else:
         return JsonResponse({'error': "invalid transaction"})

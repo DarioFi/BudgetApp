@@ -41,6 +41,8 @@
             update_data();
         };
 
+        //todo: fix floating point bug, visualization is like 30.000000002€
+
 
         update_data = function () {
             {#alert(selected_year);#}
@@ -89,10 +91,9 @@
                             dato = data.revenues[j] - (-data.expenditures[j])
                             var kek = document.createElement("td")
                             kek.innerText = dato + "€";
-                            if (dato < 0){
+                            if (dato < 0) {
                                 kek.style.color = "red";
-                            }
-                            else if (dato > 0){
+                            } else if (dato > 0) {
                                 kek.style.color = "green";
                             }
                             riga.appendChild(kek);

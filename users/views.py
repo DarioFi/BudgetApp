@@ -59,7 +59,7 @@ def does_username_exists(request):
 @csrf_exempt
 def ajax_login(request):
     response = {
-        'errore': 0
+        'state': "error"
     }
     if request.method == "POST":
 
@@ -71,13 +71,15 @@ def ajax_login(request):
             response['user'] = username
             token = Token.objects.get(user=user).key
             response['token'] = token
+            response['state'] = "success"
             return JsonResponse(response)
         else:
-            response['errore'] = 2
+
+            response['state'] = "Errore: User not found"
             return JsonResponse(response)
 
     else:
-        response['errore'] = 1
+        response['state'] = "Errore: Bad request"
 
         return JsonResponse(response)
 

@@ -98,24 +98,24 @@ class Transaction(models.Model):
         return string
 
     @classmethod
-    def create(cls, *, user, amount, date, description, category_name, account_name):  # todo: good data validation pls
+    def create(cls, *, user, balance, date, description, category_name, account_name):  # todo: good data validation pls
         updater_account: Account = Account.objects.filter(name=account_name, user_full=user)[0]
         updater_category: CategoryExpInc = CategoryExpInc.objects.filter(name=category_name, user_full=user)[0]
 
         new_transaction = Transaction(
             description=description,
             timeDate=date,
-            balance=amount,
+            balance=balance,
             account=updater_account,
             category=updater_category,
             user_full_id=user.id
         )
 
+
+        updater_account.balance += Decimal(balance)
+        updater_category.exchange += Decimal(balance)
+
         new_transaction.save(force_insert=True)
-
-        updater_account.balance += Decimal(amount)
-        updater_category.exchange += Decimal(amount)
-
         updater_account.save()
         updater_category.save()
 
