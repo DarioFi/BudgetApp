@@ -34,30 +34,16 @@ def generate_json_transaction_get(request):
     if description_filter:
         transactions = transactions.filter(description__contains=description_filter)
 
-    transactions = transactions.filter()[:100]  # todo: aggiungere il limite
+    data = transactions.values("account__name", "account_id", "category__name", "category_id", "balance", "id",
+                               "timeDate", "description")
 
-    list = [
-        # h.account.name, h.timeDate, h.category.name, h.description, h.balance, h.id
-        {
-            'account_name': h.account.name,
-            'account_id': h.account.id,
-            'timedate': h.timeDate,
-            'category_name': h.category.name,
-            'description': h.description,
-            'balance': h.balance,
-            'id': h.id
-        }
+    data = list(data)
+    data.sort(key=lambda x: x['timeDate'], reverse=True)
+    # todo: ordering
 
-        for h in transactions]
-
-    list.sort(key=lambda x: x['timedate'], reverse=True)
-
-    stuff = {
-        'lenght': len(list),
-        'transactions': list
-    }
-
-    return JsonResponse(stuff)
+    return JsonResponse({
+        'length': len(data),
+        'transactions': data})
 
 
 @login_required
@@ -147,14 +133,14 @@ def delete_transaction_ajax_post_api(request):
         return JsonResponse({'state': "Error, metodo non valido o user non autenticato"})
 
     id: int = request.POST.get('id')
-    to_del = Transaction.objects.filter(id=id, user_full_id=request.user.id)
-    if len(to_del) == 1:
-        to_del[0].delete()
+    try:
+        to_del = Transaction.objects.get(id=id, user_full_id=request.user.id)
+        to_del.safe_delete()
         return JsonResponse({'state': "success"})
-    elif len(to_del) == 0:
-        return JsonResponse({'state': "La transazione non esiste"})
-    elif len(to_del) > 1:
-        return JsonResponse({'state': "Errore server"})
+    except Exception as e:
+        print(e)  # todo: correct logging
+        return JsonResponse({'state': "Error, transaction unavailable"})
+
 
 
 @login_required
@@ -176,6 +162,12 @@ def create_transaction_ajax_post_api(request):
         return JsonResponse({'state': "success"})
     else:
         return JsonResponse({'error': "invalid transaction"})
+
+
+@login_required
+def edit_transaction(request):
+
+    return NotImplementedError("AOOOOO")
 
 
 def is_authenticated(request):
@@ -323,7 +315,7 @@ def json_generate_insight_data(request):
 
 
 @login_required
-def json_account_detailS(request):
+def json_account_details(request):
     if request.method != "GET":
         return JsonResponse({'state': "bad request"})
 
@@ -371,11 +363,10 @@ def modify_account_name(request):
     if request.method != "POST":
         return HttpResponseBadRequest
     account_id = request.POST.get('id_account')
-    acc = Account.objects.get(user_full=request.user, id=account_id)
-    # if not acc.exists():
-    #     return JsonResponse({
-    #         'state': "This account doesn't belong to you"
-    #     })
+    try:
+        acc = Account.objects.get(user_full=request.user, id=account_id)
+    except:
+        return JsonResponse({'state': "something went wrong in retrieving your account from the database"})
     new_name = request.POST.get('name')
     if new_name.replace(" ", "") == "":
         return JsonResponse({

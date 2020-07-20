@@ -98,15 +98,15 @@
 
 
                     kek = document.createElement("td");
-                    kek.innerHTML = '<a href="{% url 'account detail' 1 %}">'.replace(1,item.account_id) + item.account_name + '</a>';
+                    kek.innerHTML = '<a href="{% url 'account detail' 1 %}">'.replace(1,item.account_id) + item.account__name + '</a>';
                     riga.appendChild(kek);
 
                     kek = document.createElement("td");
-                    kek.innerText = item.timedate;
+                    kek.innerText = item.timeDate;
                     riga.appendChild(kek);
 
                     kek = document.createElement("td");
-                    kek.innerText = item.category_name;
+                    kek.innerText = item.category__name;
                     riga.appendChild(kek);
 
                     kek = document.createElement("td");

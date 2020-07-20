@@ -27,23 +27,17 @@ def rest_api_transactions_overview(request):
     if description_filter:
         transactions = transactions.filter(description__contains=description_filter)
 
-    list = [{
-        'name': h.account.name,
-        'created_on': h.timeDate,
-        'category_name': h.category.name,
-        'description': h.description,
-        'balance': h.balance,
-        'id': h.id}
-        for h in transactions]
+    # todo: aggiungere il limite, problema con l'ordering
 
-    list.sort(key=lambda x: x['created_on'], reverse=True)
+    lista = list(transactions.values("account__name", "account_id", "timeDate", "category__name", "category_id",
+                                     "description", "balance", "id"))
 
-    stuff = {
-        'lenght': len(list),
-        'transactions': list
-    }
+    lista.sort(key=lambda x: x['timeDate'], reverse=True)
 
-    return Response(stuff)
+    return Response({
+        'length': len(lista),
+        'transactions': lista
+    })
 
 
 @csrf_exempt
@@ -78,4 +72,3 @@ def category_list(request):
 @permission_classes((IsAuthenticated,))
 def account_list(request):
     return Response(Account.objects.filter(user_full=request.user).values_list("name", flat=True))
-

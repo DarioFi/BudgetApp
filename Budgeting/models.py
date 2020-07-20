@@ -33,6 +33,9 @@ class Account(models.Model):
         default=None
     )
 
+    class Meta:
+        unique_together = (("name", "user_full"),)
+
     def __str__(self):
         string = "Account:  {} || Balance {}".format(self.name, self.balance)
         return string
@@ -52,6 +55,9 @@ class CategoryExpInc(models.Model):
         null=True,
         default=None
     )
+
+    class Meta:
+        unique_together = (("name", "user_full"),)
 
     def __str__(self):
         string = "Category:  {} || Expense {}".format(self.name, self.exchange)
@@ -111,7 +117,6 @@ class Transaction(models.Model):
             user_full_id=user.id
         )
 
-
         updater_account.balance += Decimal(balance)
         updater_category.exchange += Decimal(balance)
 
@@ -121,16 +126,16 @@ class Transaction(models.Model):
 
         return True
 
+    @classmethod
+    def safe_update(cls):
+        pass
 
-@receiver(pre_delete, sender=Transaction)
-def del_handler_transaction(sender, **kwargs):
-    for key, istanza in kwargs.items():
-        if key == 'instance':
-            istanza.account.balance -= istanza.balance
-            istanza.category.exchange -= istanza.balance
-            istanza.account.save()
-            istanza.category.save()
-            break
+    def safe_delete(self):
+        self.account.balance -= self.balance
+        self.category.exchange -= self.balance
+        self.account.save()
+        self.category.save()
+        self.delete()
 
 
 @receiver(pre_delete, sender=Account)  # todo: sostituire con un sistema sicuro di trasferimento fra account
