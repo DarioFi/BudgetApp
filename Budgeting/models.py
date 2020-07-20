@@ -95,6 +95,13 @@ class Transaction(models.Model):
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
     description = models.TextField(max_length=100, default="", null=True)
 
+    def safe_delete(self):
+        self.account.balance -= self.balance
+        self.category.exchange -= self.balance
+        self.account.save()
+        self.category.save()
+        self.delete()
+
     def __str__(self):
         string = "Time: {} || Category {} || Account {} || Expense {} || Description {}".format(self.timeDate,
                                                                                                 self.category.name,
@@ -129,13 +136,6 @@ class Transaction(models.Model):
     @classmethod
     def safe_update(cls):
         pass
-
-    def safe_delete(self):
-        self.account.balance -= self.balance
-        self.category.exchange -= self.balance
-        self.account.save()
-        self.category.save()
-        self.delete()
 
 
 @receiver(pre_delete, sender=Account)  # todo: sostituire con un sistema sicuro di trasferimento fra account

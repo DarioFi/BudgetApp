@@ -65,7 +65,8 @@ INSTALLED_APPS = [
     'Budgeting',
     'CardGames',
     'users',
-    'Moody'
+    'Moody',
+    'games'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -99,6 +100,7 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, "templates"),
                  os.path.join(BASE_DIR, "users/Users_Templates"),
                  os.path.join(BASE_DIR, "Budgeting/Budget_templates"),
+                 os.path.join(BASE_DIR, "games"),
                  os.path.join(BASE_DIR, "chat_test")],
         'APP_DIRS': True,
         'OPTIONS': {
