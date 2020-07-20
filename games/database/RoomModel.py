@@ -16,9 +16,9 @@ class GameRoom(models.Model):
 
     join_slug = models.SlugField()  # todo: auto populate the model situation
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, default=None, null=True, blank=True)
-    object_id = models.PositiveIntegerField(null=True, blank=True)
-    game = GenericForeignKey('content_type', 'object_id')
+    # content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, default=None, null=True, blank=True)
+    # object_id = models.PositiveIntegerField(null=True, blank=True)
+    # game = GenericForeignKey('content_type', 'object_id')
 
     def action_dispatcher(self, action: dict, user_id: int):
         if action['type'] == "room":
@@ -64,11 +64,16 @@ class GameRoom(models.Model):
             pm2m.save()
             pass
 
+    @property
+    def game(self):
+        return self.GameObject  # todo: test if it works when implemented multiple tables
+
 
 class Players_room_m2m(models.Model):
     # many to many intermediate class
     player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_room_related')
     room = models.ForeignKey(GameRoom, on_delete=models.CASCADE, related_name='player_room_related')
+
     status = 0
     # todo: add choices for online and offline based on the status of the player,
     #  or save that in redis in order to not overwhelm the database

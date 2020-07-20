@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+
 from .fields import CardStackField, CardStack
 from .InterfaceGameModel import InterfaceGame
 import random
