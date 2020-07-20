@@ -5,4 +5,4 @@ from .fields import *
 from .RoomModel import *
 
 # commented because it's not ready
-# from .CactusModel import *
+from .CactusModel import *
