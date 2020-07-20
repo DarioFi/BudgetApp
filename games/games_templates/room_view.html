@@ -1,0 +1,82 @@
+{#todo: fix this base html and the others too#}
+
+{% include 'games_templates/navbar.html' %}
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script
+        src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<p>room name: {{ room.name }}</p>
+
+<ul>players:
+    {% for j in players %}
+        <li>{{ j.player.username }} {% if j.is_admin %} - Admin{% endif %}</li>
+    {% endfor %}
+</ul>
+
+<div class="row no-gutters row-bordered">
+    <!-- Login -->
+    <div class="col-md-6">
+        <p>palle asdjjjjpalle asdjjjjpalle asdjjjjpalle asdjjjjpalle asdjjjjpalle asdjjjjpalle asdjjjjpalle asdjjjjpalle
+        </p>
+    </div>
+</div>
+
+<script>
+    const room_slug = "{{ room.join_slug }}";
+    const room_id = {{ room.id }};
+    var is_admin = {% if self_player.is_admin %}true{% else %}false{% endif %};
+    let url = ""
+    if (window.location.host.includes("127.0.0")) {  // check if this is local-hosted and avoid wss because of no security on testing db
+        url = 'ws://'
+            + window.location.host
+            + '/wss/games/room/'
+            + room_id
+            + '/';
+    } else {
+        url = 'wss://'
+            + window.location.host
+            + '/wss/games/room/'
+            + room_id
+            + '/';
+    }
+
+    var players_ids = [];
+    var players_names = [];
+
+    const chatSocket = new WebSocket(url);
+
+    chatSocket.onopen = function () {
+
+        chatSocket.send(JSON.stringify({
+            'type': "room",
+            'content': "is_admin"
+        }))
+
+    }
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        console.log(data);
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    // todo: log mosse nella chat
+    // todo: chat
+
+</script>
+
