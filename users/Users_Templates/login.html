@@ -120,7 +120,7 @@
 
                 dataType: 'json',
                 success: function (data) {
-                    if (data.errore === 0) {
+                    if (data.state === "success") {
                         window.location.replace("")
                     } else if (data.errore === 1) {
                         alert("Bad request");
