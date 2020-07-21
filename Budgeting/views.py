@@ -187,12 +187,12 @@ def transaction_integrity_confirm(request):
     ids = [int(j) for j in request.POST.get('ids').split("||") if j.replace(" ", "") != ""]
     balances = [Decimal(j) for j in request.POST.get('balances').split("||") if j.replace(" ", "") != ""]
 
-    category_integrity = CategoryExpInc.objects.filter(user_full=request.user, name="[ACCOUNT INTEGRITY CATEGORY]")
+    category_integrity = CategoryExpInc.objects.filter(user_full=request.user, name="[account integrity]")
     if category_integrity.count() == 0:
         category_integrity = CategoryExpInc(
             user_full=request.user,
             exchange=0.0,
-            name="[ACCOUNT INTEGRITY CATEGORY]"
+            name="[account integrity]"
         )
         category_integrity.save()
     else:
