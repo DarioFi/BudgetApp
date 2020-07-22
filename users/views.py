@@ -130,6 +130,7 @@ def is_authenticated(request):
 google_client_id = "546317649909-arqlqr3sft8mgk3sc6pde0pact1vnkr0.apps.googleusercontent.com"
 google_client_secret = "svJWoBRVzFUaBKjm0fFjTwD8"
 
+
 # todo: far funzionare le mail
 
 def sendmail(request=1):
@@ -168,3 +169,6 @@ def sendmail(request=1):
         service = build('gmail', 'v1', credentials=creds)
 
     main()
+
+# todo: login generalized for the admin
+# todo: moody and deleting account is a bug

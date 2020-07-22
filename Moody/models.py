@@ -15,3 +15,7 @@ class moody_record(models.Model):
     def add_data(self, datetime, value):
         self.data.append(str(datetime) + " " + str(value))
         self.save()
+
+    @property
+    def dictionary_data(self):
+        return 1
