@@ -37,6 +37,7 @@ def check_if_moody_exists(request):
     return JsonResponse({'message': "True"})
 
 
+
 @login_required
 @require_POST
 def add_data(request):
