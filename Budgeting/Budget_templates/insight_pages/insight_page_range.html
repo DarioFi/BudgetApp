@@ -72,18 +72,23 @@
                     }
                     var labels_revenue = [];
                     var data_revenue = [];
+                    var colors_revenue = [];
                     var labels_expenditure = [];
                     var data_expenditure = [];
+                    var colors_expenditure = [];
                     table = document.getElementById("account_insight_table");
                     for (let a = 0; a < data.categories.length; a++) {
 
                         if (data.categories[a].revenue !== 0) {
                             labels_revenue.push(data.categories[a].name);
                             data_revenue.push(data.categories[a].revenue);
+                            colors_revenue.push(data.categories[a].color);
                         }
                         if (data.categories[a].expenditure !== 0) {
                             labels_expenditure.push(data.categories[a].name);
                             data_expenditure.push(data.categories[a].expenditure);
+                            colors_expenditure.push(data.categories[a].color);
+
                         }
 
                         let riga = document.createElement("tr");
@@ -130,21 +135,11 @@
                             datasets: [{
                                 {#label: 'Population',#}
                                 data: data_revenue,
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)',
-                                    'rgba(255, 99, 132, 0.6)'
-                                ],
+                                backgroundColor: colors_revenue,
                                 borderWidth: 1,
                                 borderColor: '#777',
                                 hoverBorderWidth: 6,
-                                hoverBorderColor:
-                                    ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
-                                {#['#000000']#}
+                                hoverBorderColor: colors_revenue
                             }]
                         },
                         options: {
@@ -190,20 +185,11 @@
                             datasets: [{
                                 {#label: 'Population',#}
                                 data: data_expenditure,
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(255, 206, 86, 0.6)',
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)',
-                                    'rgba(255, 99, 132, 0.6)'
-                                ],
+                                backgroundColor: colors_expenditure,
                                 borderWidth: 1,
                                 borderColor: '#777',
                                 hoverBorderWidth: 6,
-                                hoverBorderColor:
-                                    ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)']
+                                hoverBorderColor: colors_expenditure
                             }]
                         },
                         options: {

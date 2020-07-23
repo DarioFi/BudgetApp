@@ -49,6 +49,8 @@ class CategoryExpInc(models.Model):
     exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
     created_on = models.DateTimeField(editable=False, default=timezone.now)
 
+    color = models.CharField(max_length=7, default="#ffffff")
+
     user_full = models.ForeignKey(
         User,
         on_delete=models.SET_DEFAULT,

@@ -76,7 +76,15 @@ def generate_categories_overview_json(request):  # todo: adjust data
         else:
             negative_bal += somma
 
-        data.append([cat.name, cat.exchange, temp, somma, 0, alfa.count(), str(cat.created_on)[0:10]])
+        data.append({
+            'category_name': cat.name,
+            'category_balance': cat.exchange,
+            'color': cat.color,
+            'n_transaction': temp,
+            'interval_somma': somma,
+            'interval_share': 0,
+            'n_transaction_interval': alfa.count(),
+            'created_on': str(cat.created_on)[0:10]})
 
     return JsonResponse({'categories': data})
 
@@ -142,7 +150,6 @@ def delete_transaction_ajax_post_api(request):
         return JsonResponse({'state': "Error, transaction unavailable"})
 
 
-
 @login_required
 def create_transaction_ajax_post_api(request):
     if request.method != "POST" or not request.user.is_authenticated:
@@ -166,7 +173,6 @@ def create_transaction_ajax_post_api(request):
 
 @login_required
 def edit_transaction(request):
-
     return NotImplementedError("AOOOOO")
 
 
@@ -217,8 +223,8 @@ def json_generate_insight_data(request):
     if request.method != "GET":
         return JsonResponse({'state': "bad request"})
 
-    date_init = request.GET.get('date_init')
-    date_end = request.GET.get('date_end')
+    date_init = request.GET.get('date_init', None)
+    date_end = request.GET.get('date_end', None)
     print(date_init)
     print(date_end)
     # todo: finirla
@@ -230,7 +236,7 @@ def json_generate_insight_data(request):
     data = {}
 
     transactions = Transaction.objects.filter(user_full=request.user)
-    if date_init != None and date_end != None:
+    if date_init is not None and date_end is not None:
         transactions.filter(timeDate__lt=date_end, timeDate__gt=date_init)
     categories = CategoryExpInc.objects.filter(user_full=request.user)
     accounts = Account.objects.filter(user_full=request.user)
@@ -240,7 +246,8 @@ def json_generate_insight_data(request):
         'name': a.name,
         'n_transactions': 0,
         'revenue': 0,
-        'expenditure': 0
+        'expenditure': 0,
+        'color': a.color
     } for a in categories]
     acc_data = [{
         'id': a.id,
@@ -261,9 +268,7 @@ def json_generate_insight_data(request):
         'description': h.description,
         'balance': h.balance,
         'id': h.id
-    }
-
-        for h in transactions]
+    } for h in transactions]
 
     for t in transactions:
         if t.balance > 0:

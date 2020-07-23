@@ -35,11 +35,41 @@
                 function create_elem(item, index) {
                     let riga = document.createElement("tr");
 
-                    for (let j = 0; j < item.length; j++) {
-                        let kek = document.createElement("td");
-                        kek.innerText = item[j];
-                        riga.appendChild(kek);
-                    }
+                    kek = document.createElement("td")
+                    let alfa = document.createElement('p')
+                    alfa.innerText = '■ ' + item.category_name;
+                    alfa.style.color = item.color;
+                    kek.appendChild(alfa)
+                    riga.appendChild(kek);  // todo: add color picker
+
+
+                    kek = document.createElement("td")
+                    kek.innerText = item.category_balance;
+                    riga.appendChild(kek);
+
+
+                    kek = document.createElement("td")
+                    kek.innerText = item.n_transaction;
+                    riga.appendChild(kek);
+
+
+                    kek = document.createElement("td")
+                    kek.innerText = item.interval_somma;
+                    riga.appendChild(kek);
+
+                    kek = document.createElement("td")
+                    kek.innerText = item.interval_share;
+                    riga.appendChild(kek);
+
+                    kek = document.createElement("td")
+                    kek.innerText = item.n_transaction_interval;
+                    riga.appendChild(kek);
+
+                    kek = document.createElement("td")
+                    kek.innerText = item.created_on;
+                    riga.appendChild(kek);
+
+
                     table.appendChild(riga);
                 }
             }
