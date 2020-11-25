@@ -18,6 +18,7 @@ default_user = User.objects.first()
 # todo: add test unit
 
 # todo: add colors
+
 class Account(models.Model):
     name = models.TextField(max_length=30, null=False)
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)

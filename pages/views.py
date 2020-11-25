@@ -7,7 +7,7 @@ from users.views import login_request
 
 def home_view(request, *args, **kwargs):
     if request.user.is_authenticated:
-        return landing_page(request)  # todo: create a general purpose landing page for budgeting, cardgames and moody
+        return landing_page(request)
     else:
         return login_request(request)
         pass

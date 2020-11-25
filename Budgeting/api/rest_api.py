@@ -30,9 +30,7 @@ def rest_api_transactions_overview(request):
     # todo: aggiungere il limite, problema con l'ordering
 
     lista = list(transactions.values("account__name", "account_id", "timeDate", "category__name", "category_id",
-                                     "description", "balance", "id"))
-
-    lista.sort(key=lambda x: x['timeDate'], reverse=True)
+                                     "description", "balance", "id").order_by("-timeDate"))
 
     return Response({
         'length': len(lista),

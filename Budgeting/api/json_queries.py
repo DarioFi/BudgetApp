@@ -35,11 +35,9 @@ def generate_json_transaction_get(request):
         transactions = transactions.filter(description__contains=description_filter)
 
     data = transactions.values("account__name", "account_id", "category__name", "category_id", "balance", "id",
-                               "timeDate", "description")
+                               "timeDate", "description").order_by("-timeDate")
 
     data = list(data)
-    data.sort(key=lambda x: x['timeDate'], reverse=True)
-    # todo: ordering
 
     return JsonResponse({
         'length': len(data),
