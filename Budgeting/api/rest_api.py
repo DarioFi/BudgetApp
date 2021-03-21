@@ -55,7 +55,7 @@ def create_transaction(request):
                           date=date, balance=balance):
         return Response({'state': "success"})
     else:
-        return Response({'error': "invalid transaction"})
+        return Response({'state': "error", 'error': "invalid transaction"})
 
 
 @csrf_exempt
