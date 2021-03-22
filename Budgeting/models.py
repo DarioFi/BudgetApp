@@ -47,7 +47,7 @@ class Account(models.Model):
 # todo: add uncounted category and decide its behaviour
 class CategoryExpInc(models.Model):
     name = models.TextField(max_length=30, null=False)
-    exchange = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
+    balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
     created_on = models.DateTimeField(editable=False, default=timezone.now)
 
     color = models.CharField(max_length=7, default="#ffffff")
@@ -63,7 +63,7 @@ class CategoryExpInc(models.Model):
         unique_together = (("name", "user_full"),)
 
     def __str__(self):
-        string = "Category:  {} || Expense {}".format(self.name, self.exchange)
+        string = "Category:  {} || Expense {}".format(self.name, self.balance)
         return string
 
     def save(self, *args, **kwargs):
@@ -100,7 +100,7 @@ class Transaction(models.Model):
 
     def safe_delete(self):
         self.account.balance -= self.balance
-        self.category.exchange -= self.balance
+        self.category.balance -= self.balance
         self.account.save()
         self.category.save()
         self.delete()
@@ -128,7 +128,7 @@ class Transaction(models.Model):
         )
 
         updater_account.balance += Decimal(balance)
-        updater_category.exchange += Decimal(balance)
+        updater_category.balance += Decimal(balance)
 
         new_transaction.save(force_insert=True)
         updater_account.save()

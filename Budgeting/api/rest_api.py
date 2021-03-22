@@ -70,3 +70,17 @@ def category_list(request):
 @permission_classes((IsAuthenticated,))
 def account_list(request):
     return Response(Account.objects.filter(user_full=request.user).values_list("name", flat=True))
+
+
+@csrf_exempt
+@api_view(['GET', ])
+@permission_classes((IsAuthenticated,))
+def account_overview(request):
+    return Account.objects.filter(user_full=request.user).values_list("name", "balance", "starting_balance",
+                                                                      "created_on")
+
+@csrf_exempt
+@api_view(['GET', ])
+@permission_classes((IsAuthenticated,))
+def category_overview(request):
+    return CategoryExpInc.objects.filter(user_full=request.user).values_list("name", "balance", "created_on")

@@ -23,7 +23,7 @@ class AccountAdmin(admin.ModelAdmin):
 
 
 class CategoryExpIncAdmin(admin.ModelAdmin):
-    list_display = ('user_full', 'name', 'exchange', 'created_on')
+    list_display = ('user_full', 'name', 'balance', 'created_on')
 
     list_filter = ('user_full',)
 

@@ -76,7 +76,7 @@ def generate_categories_overview_json(request):  # todo: adjust data
 
         data.append({
             'category_name': cat.name,
-            'category_balance': cat.exchange,
+            'category_balance': cat.balance,
             'color': cat.color,
             'n_transaction': temp,
             'interval_somma': somma,
@@ -191,7 +191,7 @@ def create_new_category(request):
 
         if CategoryExpInc.objects.filter(name=name, user_full=request.user).exists():
             return JsonResponse({'state': "A category with this name already exists!"})
-        cat = CategoryExpInc(name=name, exchange=exchange, user_full=request.user)
+        cat = CategoryExpInc(name=name, balance=exchange, user_full=request.user)
         cat.save(force_insert=True)
 
         return JsonResponse({'state': 'success'})
@@ -203,13 +203,13 @@ def create_new_account(request):
     if request.method == 'POST':
         name: str = request.POST.get('name')
         try:
-            exchange: float = float(request.POST.get('balance'))
+            balance: float = float(request.POST.get('balance'))
         except:
             return JsonResponse({'state': 'Error in the value of the initial balance'})
 
         if Account.objects.filter(name=name, user_full=request.user).exists():
             return JsonResponse({'state': "A category with this name already exists!"})
-        cat = Account(name=name, starting_balance=exchange, user_full=request.user, balance=exchange)
+        cat = Account(name=name, starting_balance=balance, user_full=request.user, balance=balance)
         cat.save(force_insert=True)
 
         return JsonResponse({'state': 'success'})

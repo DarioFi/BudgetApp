@@ -191,7 +191,7 @@ def transaction_integrity_confirm(request):
     if category_integrity.count() == 0:
         category_integrity = CategoryExpInc(
             user_full=request.user,
-            exchange=0.0,
+            balance=0.0,
             name="[account integrity]"
         )
         category_integrity.save()
@@ -218,7 +218,7 @@ def transaction_integrity_confirm(request):
 
         trans_list.append(new_transaction)
 
-        category_integrity.exchange -= balances[h]
+        category_integrity.balance -= balances[h]
         acc_list[-1].balance -= balances[h]
 
     category_integrity.save()
@@ -262,7 +262,7 @@ def export_user_data_all(request):
     for a in categories:
         new_dict = {
             'name': a.name,
-            'balance': float(a.exchange),
+            'balance': float(a.balance),
             'creation date': str(a.created_on)
         }
         categories_list_dict.append(new_dict)
@@ -371,7 +371,7 @@ def subsituite_database(request):
         for new_cat in alfa['Categories']:
             to_add = CategoryExpInc(
                 name=new_cat['name'],
-                exchange=Decimal(new_cat['balance']),
+                balance=Decimal(new_cat['balance']),
                 created_on=new_cat['creation date'],
                 user_full=request.user
             )
