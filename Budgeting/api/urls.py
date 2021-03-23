@@ -1,7 +1,6 @@
 from django.urls import path
 from .json_queries import *
 from .rest_api import *
-
 urlpatterns = [
     path('ajax/json_categories', generate_categories_overview_json, name="json_categories"),
     path('ajax/json_accounts', generate_accounts_overview_json, name="json_accounts"),
@@ -17,6 +16,9 @@ urlpatterns = [
     path('rest/transactions', rest_api_transactions_overview),
     path('rest/create_transactions', create_transaction),
     path('rest/account_list', account_list),
-    path('rest/category_list', category_list)
+    path('rest/category_list', category_list),
+    path('rest/account_overview', account_overview),
+    path('rest/category_overview', category_overview),
 ]
+
 # todo: cambiare home page filabudget
