@@ -76,11 +76,11 @@ def account_list(request):
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def account_overview(request):
-    return Response(Account.objects.filter(user_full=request.user).values_list("name", "balance", "starting_balance",
+    return Response(Account.objects.filter(user_full=request.user).values("name", "balance", "starting_balance",
                                                                       "created_on"))
 
 @csrf_exempt
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def category_overview(request):
-    return Response(CategoryExpInc.objects.filter(user_full=request.user).values_list("name", "balance", "created_on"))
+    return Response(CategoryExpInc.objects.filter(user_full=request.user).values("name", "balance", "created_on"))
