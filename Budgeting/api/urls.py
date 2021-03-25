@@ -19,6 +19,8 @@ urlpatterns = [
     path('rest/category_list', category_list),
     path('rest/account_overview', account_overview),
     path('rest/category_overview', category_overview),
+    path('rest/new_category', new_category),
+    path('rest/new_account', new_account),
 ]
 
 # todo: cambiare home page filabudget

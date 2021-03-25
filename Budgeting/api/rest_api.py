@@ -1,9 +1,14 @@
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from Budgeting.models import Transaction, CategoryExpInc, Account
+
+import re
+
+COLOR_PATTERN = re.compile("^#[a-fA-F0-9]{6}")
 
 
 @csrf_exempt
@@ -77,10 +82,52 @@ def account_list(request):
 @permission_classes((IsAuthenticated,))
 def account_overview(request):
     return Response(Account.objects.filter(user_full=request.user).values("name", "balance", "starting_balance",
-                                                                      "created_on"))
+                                                                          "created_on"))
+
 
 @csrf_exempt
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def category_overview(request):
     return Response(CategoryExpInc.objects.filter(user_full=request.user).values("name", "balance", "created_on"))
+
+
+@csrf_exempt
+@api_view(['POST', ])
+@permission_classes((IsAuthenticated,))
+def new_account(request):
+    name: str = request.POST.get('name')
+    try:
+        balance: float = float(request.POST.get('balance'))
+    except:
+        return HttpResponseBadRequest("Initial balance is not a number!")
+
+    if Account.objects.filter(name=name, user_full=request.user).exists():
+        return HttpResponseBadRequest("An account with this name already exists!")
+    acc = Account(name=name, starting_balance=balance, user_full=request.user, balance=balance)
+    acc.save(force_insert=True)
+
+    return JsonResponse({'state': 'success'})
+
+
+@csrf_exempt
+@api_view(['POST', ])
+@permission_classes((IsAuthenticated,))
+def new_category(request):
+    name: str = request.POST.get('name')
+    try:
+        balance: float = float(request.POST.get('balance'))
+    except ValueError:
+        return HttpResponseBadRequest("Initial balance is not a number!")
+
+    color: str = request.POST.get('color')
+    if color is not None:
+        if not COLOR_PATTERN.match(color):
+            return HttpResponseBadRequest("Invalid color")
+
+    if CategoryExpInc.objects.filter(name=name, user_full=request.user).exists():
+        return HttpResponseBadRequest("A category with this name already exists!")
+    cat = CategoryExpInc(name=name, user_full=request.user, balance=balance, color=color)
+    cat.save(force_insert=True)
+
+    return JsonResponse({'state': 'success'})

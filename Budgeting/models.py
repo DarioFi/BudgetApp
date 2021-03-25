@@ -50,7 +50,7 @@ class CategoryExpInc(models.Model):
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0)
     created_on = models.DateTimeField(editable=False, default=timezone.now)
 
-    color = models.CharField(max_length=7, default="#ffffff")
+    color = models.CharField(max_length=7, default="#ff0000")
 
     user_full = models.ForeignKey(
         User,
@@ -69,6 +69,8 @@ class CategoryExpInc(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.created_on = timezone.now()
+        if self.color is None:
+            self.color = "#ff0000"
         return super(CategoryExpInc, self).save(*args, **kwargs)
 
 
