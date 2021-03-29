@@ -8,7 +8,18 @@ from Budgeting.models import Transaction, CategoryExpInc, Account
 
 import re
 
+from django.core.exceptions import ObjectDoesNotExist
 COLOR_PATTERN = re.compile("^#[a-fA-F0-9]{6}")
+
+
+def rest_auth(*args):
+    @csrf_exempt
+    @api_view([*args])
+    @permission_classes((IsAuthenticated,))
+    def decorator(func):
+        return func
+
+    return decorator
 
 
 @csrf_exempt
@@ -37,10 +48,7 @@ def rest_api_transactions_overview(request):
     lista = list(transactions.values("account__name", "account_id", "timeDate", "category__name", "category_id",
                                      "description", "balance", "id").order_by("-timeDate"))
 
-    return Response({
-        'length': len(lista),
-        'transactions': lista
-    })
+    return Response(lista)
 
 
 @csrf_exempt
@@ -53,7 +61,7 @@ def create_transaction(request):
     date = request.POST.get('date')
     try:
         balance: float = float(request.POST.get('balance'))
-    except:
+    except ValueError:
         return Response({'state': "Error in the value of amount"})
 
     if Transaction.create(user=request.user, description=description, account_name=account, category_name=category,
@@ -81,7 +89,7 @@ def account_list(request):
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def account_overview(request):
-    return Response(Account.objects.filter(user_full=request.user).values("name", "balance", "starting_balance",
+    return Response(Account.objects.filter(user_full=request.user).values("id","name", "balance", "starting_balance",
                                                                           "created_on"))
 
 
@@ -89,7 +97,7 @@ def account_overview(request):
 @api_view(['GET', ])
 @permission_classes((IsAuthenticated,))
 def category_overview(request):
-    return Response(CategoryExpInc.objects.filter(user_full=request.user).values("name", "balance", "created_on"))
+    return Response(CategoryExpInc.objects.filter(user_full=request.user).values("id", "name", "balance", "created_on"))
 
 
 @csrf_exempt
@@ -99,7 +107,7 @@ def new_account(request):
     name: str = request.POST.get('name')
     try:
         balance: float = float(request.POST.get('balance'))
-    except:
+    except ValueError:
         return HttpResponseBadRequest("Initial balance is not a number!")
 
     if Account.objects.filter(name=name, user_full=request.user).exists():
@@ -131,3 +139,19 @@ def new_category(request):
     cat.save(force_insert=True)
 
     return JsonResponse({'state': 'success'})
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def delete_transaction(request):
+    id: int = request.POST.get('id')
+
+    try:
+        to_del = Transaction.objects.get(id=id, user_full_id=request.user.id)
+        to_del.safe_delete()
+        return JsonResponse({'state': "success"})
+    except ObjectDoesNotExist:
+        return HttpResponseBadRequest("The transactions does not exist")
+    except Exception:
+        return HttpResponseBadRequest("Somehting went wrong :(")
